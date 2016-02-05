@@ -59,6 +59,6 @@ int main() {
 	
 	// Cleanup
 	delete train;
-	delete temp;
+	delete test;
 	return(0);
 }

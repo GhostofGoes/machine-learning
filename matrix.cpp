@@ -69,9 +69,9 @@ Matrix * Matrix::multiply( Matrix * mat ) {
 		for( int c = 0; c < newCols; c++ ) {
 			temp = 0;
 			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
-				temp += ( data[i][j] * mat->getValue(j, c) );
+				temp += ( data[r][j] * mat->getValue(j, c) );
 			}
-			result->setValue(i, c, temp);
+			result->setValue(r, c, temp);
 		}
 	}
 	
