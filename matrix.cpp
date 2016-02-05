@@ -60,11 +60,22 @@ Matrix * Matrix::multiply( Matrix * mat ) {
 		cerr << "#cols != #rows for multiplication!" << endl;
 		return NULL;
 	}
+	int newRows = numRows;
+	int newCols = mat->getNumCols();
+	int temp = 0;
+	Matrix * result = new Matrix(newRows, newCols);
 	
-	Matrix * result = new Matrix(numRows, mat->getNumCols());
+	for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
+		for( int c = 0; c < newCols; c++ ) {
+			temp = 0;
+			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
+				temp += ( data[i][j] * mat->getValue(j, c) );
+			}
+			result->setValue(i, c, temp);
+		}
+	}
 	
-	
-	
+	return result;
 }
 
 // Scalar addition
@@ -94,10 +105,26 @@ void Matrix::add( Matrix * mat ) {
 	
 }
 
-void Matrix::transpose() {
+Matrix * Matrix::transpose() {
+	int newRows = numCols;
+	int newCols = numRows;
+	Matrix * result = new Matrix(newRows, newCols);
 	
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(c, r, data[r][c]);
+		}
+	}
+
 }
 
+// TODO
+Matrix * Matrix::inverse() {
+	int newRows = 0;
+	int newCols = 0;	
+	Matrix * result = new Matrix(newRows, newCols);
+	
+}
 
 double Matrix::getValue( int row, int col ) {
 	return data[row][col];

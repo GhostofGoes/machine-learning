@@ -17,6 +17,3 @@ clean:
 
 tar:
 	tar -cvf $(BIN).tar $(SRCS) makefile
-
-test:
-	# TODO

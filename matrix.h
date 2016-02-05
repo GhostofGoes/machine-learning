@@ -17,13 +17,14 @@ class Matrix {
 		Matrix * multiply( Matrix * mat );
 		void add( double scalar );
 		void add( Matrix * mat );
-		void transpose();
+		Matrix * transpose();
+		Matrix * inverse();
 		
 				
 		double * getRow( int row );
 		double * getCol( int col );
 		double getValue( int row, int col );
-		void setValue( int row, int col );
+		void setValue( int row, int col, double value );
 		void setRowToVec( double * x, int row );
 		void setColToVec( double * y, int col );
 		int getNumRows();
