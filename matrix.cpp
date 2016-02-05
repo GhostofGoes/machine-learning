@@ -69,7 +69,7 @@ Matrix * Matrix::multiply( Matrix * mat ) {
 		for( int c = 0; c < newCols; c++ ) {
 			temp = 0;
 			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
-				temp += ( data[r][j] * mat->getValue(j, c) );
+				temp += ( data[r][j] * mat->getValue(j, c) ); // this.getValue?
 			}
 			result->setValue(r, c, temp);
 		}
@@ -127,7 +127,13 @@ Matrix * Matrix::inverse() {
 }
 
 double Matrix::getValue( int row, int col ) {
-	return data[row][col];
+	if( row >= numRows || col >= numCols ) {
+		cerr << "getValue out of bounds!" << endl;
+		return -50.0;
+	}
+	else {
+		return data[row][col];
+	}
 }
 
 double * Matrix::getRow( int row ) {
@@ -139,11 +145,21 @@ double * Matrix::getCol( int col ) {
 }
 
 void Matrix::setValue( int row, int col, double value ) {
-	data[row][col] = value;
+	if( row >= numRows || col >= numCols ) {
+		cerr << "setValue out of bounds!" << endl;
+		return;
+	}
+	else {
+		data[row][col] = value;
+	}
 }
 
 // possible buffer overflow here
 void Matrix::setRowToVec( double * x, int row ) {
+	if( row >= numRows ) {
+		cerr << "setRowToVec out of bounds!" << endl;
+		return;
+	}	
 	for( int i = 0; i < numCols; i++ )
 	{
 		data[row][i] = x[i];
@@ -152,6 +168,10 @@ void Matrix::setRowToVec( double * x, int row ) {
 
 // and here
 void Matrix::setColToVec( double * y, int col ) {
+	if( col >= numCols ) {
+		cerr << "setColToVec out of bounds!" << endl;
+		return;
+	}	
 	for( int i = 0; i < numCols; i++ )
 	{
 		data[i][col] = y[i];

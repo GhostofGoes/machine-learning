@@ -5,7 +5,7 @@ LIBS = -lm $(BIN).cpp matrix.cpp
 CCFLAGS = -g
 # -std=gnu++11
 
-$(BIN):
+$(BIN): $(SRCS)
 	$(CC) $(CCFLAGS) $(OBJS) $(LIBS) -o $(BIN)
 
 all:    

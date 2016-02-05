@@ -22,26 +22,42 @@ int main() {
 	
 	
 	// *******************
-	// ** Training Data **
-	// *******************
+	// ** Training Data Input **
 	
 	cin >> inputs;
 	cin >> rows;
 	cin >> cols;
 	Matrix* train = new Matrix(rows, cols);
 	
+	
+	cout << "Inputs: " << inputs << "\nRows: " << rows << "\nCols: " << cols << endl;
+	//return(0);
 	// Fill the matrix
-	for(int i = 0; i < rows; i++) {
-		for(int j = 0; i < cols; j++) {
+	for(int r = 0; r < rows; r++) {
+		for(int c = 0; c < cols; c++) {
 			cin >> temp;
-			train->setValue( i, j, temp);
+			train->setValue( r, c, temp);
 		}
 	}
+
+	cout << "Training matrix..." << endl;
+	train->printAll();
 	
 	
-	// ***************
-	// ** Test Data **
-	// ***************
+	// *******************
+	// Training
+	
+	Matrix* w = new Matrix(rows, cols);
+	
+	
+	
+	
+	
+	
+	
+	
+	// *******************
+	// ** Test Data Input **
 	
 	temp = -99; // paranoia
 	cin >> rows;
@@ -49,13 +65,15 @@ int main() {
 	Matrix* test = new Matrix(rows, cols);
 	
 	// Fill the matrix
-	for(int i = 0; i < rows; i++) {
-		for(int j = 0; i < cols; j++) {
+	for(int r = 0; r < rows; r++) {
+		for(int c = 0; c < cols; c++) {
 			cin >> temp;
-			test->setValue(i, j, temp);
+			test->setValue(r, c, temp);
 		}
 	}	
 	
+	cout << "Testing matrix..." << endl;
+	test->printAll();
 	
 	// Cleanup
 	delete train;
