@@ -23,6 +23,7 @@ class Matrix {
 		double * getRow( int row );
 		double * getCol( int col );
 		double getValue( int row, int col );
+		void setValue( int row, int col );
 		void setRowToVec( double * x, int row );
 		void setColToVec( double * y, int col );
 		int getNumRows();

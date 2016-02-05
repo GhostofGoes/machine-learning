@@ -43,25 +43,61 @@ Matrix::~Matrix() {
 	delete data;
 }
 
+// Scalar multiplication
 void Matrix::multiply( double scalar ) {
-	
+	for( int i = 0; i < numRows; i++ ) {
+		for( int j = 0; j < numCols; j++ ) {
+			data[i][j] *= scalar;
+		}
+	}
 }
 
+// Matrix multiplication
 Matrix * Matrix::multiply( Matrix * mat ) {
 	
-}
-
-void Matrix::add( double scalar ) {
+	// Check that matricies are able to be multiplied
+	if( numCols != mat->getNumRows() ) {
+		cerr << "#cols != #rows for multiplication!" << endl;
+		return NULL;
+	}
+	
+	Matrix * result = new Matrix(numRows, mat->getNumCols());
+	
+	
 	
 }
 
+// Scalar addition
+void Matrix::add( double scalar ) {
+	for( int i = 0; i < numRows; i++ ) {
+		for( int j = 0; j < numCols; j++ ) {
+			data[i][j] += scalar;
+		}
+	}	
+}
+
+// Matrix addition
 void Matrix::add( Matrix * mat ) {
+	
+	// Check matricies are the same size
+	if( numRows != mat->getNumRows() || numCols != mat->getNumCols() ) {
+		cerr << "Matrix sizes don't match for addition!" << endl;
+		return;
+	}	
+	
+	// Add the matricies
+	for( int i = 0; i < numRows; i++ ) {
+		for( int j = 0; j < numCols; j++ ) {
+			data[i][j] += mat->getValue(i, j);
+		}
+	}	
 	
 }
 
 void Matrix::transpose() {
 	
 }
+
 
 double Matrix::getValue( int row, int col ) {
 	return data[row][col];
@@ -73,6 +109,10 @@ double * Matrix::getRow( int row ) {
 
 double * Matrix::getCol( int col ) {
 	// tbd, dynamic memory issues
+}
+
+void Matrix::setValue( int row, int col, double value ) {
+	data[row][col] = value;
 }
 
 // possible buffer overflow here

@@ -14,17 +14,51 @@ using namespace std;
 
 int main() {
 	
-	
+	// Initialization
 	int inputs = 0;
 	int rows = 0;
 	int cols = 0;
-	Matrix* test = new Matrix(5, 5);
+	int temp = -99;
 	
-
+	
+	// *******************
+	// ** Training Data **
+	// *******************
+	
 	cin >> inputs;
+	cin >> rows;
+	cin >> cols;
+	Matrix* train = new Matrix(rows, cols);
+	
+	// Fill the matrix
+	for(int i = 0; i < rows; i++) {
+		for(int j = 0; i < cols; j++) {
+			cin >> temp;
+			train->setValue( i, j, temp);
+		}
+	}
 	
 	
+	// ***************
+	// ** Test Data **
+	// ***************
 	
-	delete test;
+	temp = -99; // paranoia
+	cin >> rows;
+	cin >> cols;
+	Matrix* test = new Matrix(rows, cols);
+	
+	// Fill the matrix
+	for(int i = 0; i < rows; i++) {
+		for(int j = 0; i < cols; j++) {
+			cin >> temp;
+			test->setValue(i, j, temp);
+		}
+	}	
+	
+	
+	// Cleanup
+	delete train;
+	delete temp;
 	return(0);
 }
