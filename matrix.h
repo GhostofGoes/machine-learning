@@ -10,8 +10,8 @@ class Matrix {
 		Matrix( Matrix * initMat );
 		~Matrix();
 		
-		initByRow( double * x, int rows );
-		initByCol( double * y, int cols );
+		void initByRow( double * x, int rows );
+		void initByCol( double * y, int cols );
 		
 		void multiply( double scalar );
 		Matrix * multiply( Matrix * mat );
@@ -37,4 +37,4 @@ class Matrix {
 		int numRows;
 		int numCols;
 		
-}
+};

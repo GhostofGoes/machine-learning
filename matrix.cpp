@@ -5,6 +5,7 @@
 // Description:	Matrix class definition
 
 #include <iostream>
+#include "matrix.h"
 
 using namespace std;
 
@@ -28,7 +29,7 @@ Matrix::Matrix( Matrix * init ) {
 	}
 	
 	for( int i = 0; i < numRows; i++ ) {
-		for( init j = 0; j < numCols; j++ ) {
+		for( int j = 0; j < numCols; j++ ) {
 			data[i][j] = init->getValue(i, j);
 		}
 	}
@@ -112,7 +113,7 @@ void Matrix::printRow( int row ) {
 }
 
 void Matrix::printCol( int col ) {
-	for( init i = 0; i < numRows; i++ ) {
+	for( int i = 0; i < numRows; i++ ) {
 		cout << " " << data[i][col];
 	}
 	cout << endl;
