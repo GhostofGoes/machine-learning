@@ -5,9 +5,11 @@
 // Description:	Matrix class definition
 
 #include <iostream>
+#include <vector>
 #include "matrix.h"
 
 using namespace std;
+// TODO: write a unit test?
 
 Matrix::Matrix( int rows, int cols ) {
 	numRows = rows;
@@ -42,6 +44,42 @@ Matrix::~Matrix() {
 	}
 	delete data;
 }
+
+void Matrix::initAllToValue( double value ) {
+	
+	/*
+	for( auto &x : data ) {
+		for( auto &y : x ) {
+			cout << y << endl;
+		}
+	}*/
+	for( int r = 0; r < numRows; r++ ) {
+		for(int c = 0; c < numCols; c++ ) {
+			data[r][c] = value;
+		}
+	}
+}
+
+// primary reason for using vectors, right here.
+// #BufferOverflow #BetterCodingPractices
+void Matrix::initByRow( double * x, int row ) {
+	if(x == NULL || row >= numRows ) {
+		return;
+	}
+	for( int c = 0; c < numCols; c++ ) {
+		data[row][c] = x[c];
+	}
+}
+
+void Matrix::initByCol( double * y, int col ) {
+	if(y == NULL || col >= numCols ) {
+		return;
+	}
+	for( int r = 0; r < numRows; r++ ) {
+		data[r][col] = y[r];
+	}	
+}
+
 
 // Scalar multiplication
 void Matrix::multiply( double scalar ) {

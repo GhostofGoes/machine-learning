@@ -4,14 +4,18 @@
 // Semester: 	Spring 2016
 // Description:	Matrix class declarations
 
+#include <vector>
+using namespace std;
+
 class Matrix {
 	public:
 		Matrix( int rows, int cols );
 		Matrix( Matrix * initMat );
 		~Matrix();
 		
-		void initByRow( double * x, int rows );
-		void initByCol( double * y, int cols );
+		void initAllToValue( double value );
+		void initByRow( double * x, int row );
+		void initByCol( double * y, int col );
 		
 		void multiply( double scalar );
 		Matrix * multiply( Matrix * mat );
@@ -35,6 +39,7 @@ class Matrix {
 		void printCol( int col );
 		
 	private:
+		//vector< vector< double > > data;
 		double ** data;
 		int numRows;
 		int numCols;

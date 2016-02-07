@@ -6,7 +6,8 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <cmath>
+#include <vector>
+//#include <cmath>
 #include "matrix.h"
 
 #define DEBUG 1
