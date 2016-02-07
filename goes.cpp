@@ -7,8 +7,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
-
 #include "matrix.h"
+
+#define DEBUG 1
 
 using namespace std;
 
@@ -18,7 +19,7 @@ int main() {
 	int inputs = 0;
 	int rows = 0;
 	int cols = 0;
-	int temp = -99;
+	double temp = -99;
 	
 	
 	// *******************
@@ -27,21 +28,35 @@ int main() {
 	cin >> inputs;
 	cin >> rows;
 	cin >> cols;
-	Matrix* train = new Matrix(rows, cols);
+	int outputs = cols - inputs;
+	Matrix* tinput = new Matrix(rows, inputs);
+	Matrix* toutput = new Matrix(rows, outputs); 
 	
 	
-	cout << "Inputs: " << inputs << "\nRows: " << rows << "\nCols: " << cols << endl;
-	//return(0);
+	if(DEBUG) {
+		cout << "Inputs: " << inputs << "\nRows: " << rows << "\nCols: " << cols << endl;
+	}
+
 	// Fill the matrix
 	for(int r = 0; r < rows; r++) {
-		for(int c = 0; c < cols; c++) {
+		for(int c = 0; c < inputs; c++) {
 			cin >> temp;
-			train->setValue( r, c, temp);
+			tinput->setValue( r, c, temp);
+		}
+		
+		for(int c = 0; c < outputs; c++ ) {
+			cin >> temp;
+			toutput->setValue( r, c, temp);			
 		}
 	}
 
-	cout << "Training matrix..." << endl;
-	train->printAll();
+	if(DEBUG) {
+		cout << "Training Inputs..." << endl;
+		tinput->printAll();
+		cout << "Training Outputs..." << endl;
+		toutput->printAll();
+	}
+	
 	
 	
 	// *******************
@@ -72,11 +87,14 @@ int main() {
 		}
 	}	
 	
-	cout << "Testing matrix..." << endl;
-	test->printAll();
+	if(DEBUG) {
+		cout << "Test inputs matrix" << endl;
+		test->printAll();
+	}
 	
 	// Cleanup
-	delete train;
+	delete tinput;
+	delete toutput;
 	delete test;
 	return(0);
 }
