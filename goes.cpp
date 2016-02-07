@@ -14,65 +14,123 @@
 
 using namespace std;
 
+int activate( double input ); // activates a thing
+
+
 int main() {
 	
 	// Initialization
-	int inputs = 0;
+	int numInputs = 0;
 	int rows = 0;
 	int cols = 0;
 	double temp = -99;
+	double bias = -1;
+	double eta = 0.25; // what the book uses
+	int attempts = 10;
 	
+	/* Training Data Input */
 	
-	// *******************
-	// ** Training Data Input **
-	
-	cin >> inputs;
+	cin >> numInputs;
 	cin >> rows;
 	cin >> cols;
-	int outputs = cols - inputs;
-	Matrix* tinput = new Matrix(rows, inputs);
-	Matrix* toutput = new Matrix(rows, outputs); 
+	int numOutputs = cols - numInputs;
+	Matrix* tinput = new Matrix(rows, numInputs + 1);
+	Matrix* toutput = new Matrix(rows, numOutputs); 
 	
 	
 	if(DEBUG) {
-		cout << "Inputs: " << inputs << "\nRows: " << rows << "\nCols: " << cols << endl;
+		cout << "Inputs: " << numInputs << "\nRows: " << rows << "\nCols: " << cols << endl;
 	}
 
 	// Fill the matrix
 	for(int r = 0; r < rows; r++) {
-		for(int c = 0; c < inputs; c++) {
+		for(int c = 0; c < numInputs; c++) {
 			cin >> temp;
 			tinput->setValue( r, c, temp);
 		}
 		
-		for(int c = 0; c < outputs; c++ ) {
+		for(int c = 0; c < numOutputs; c++ ) {
 			cin >> temp;
 			toutput->setValue( r, c, temp);			
 		}
 	}
+	
+	// Append the bias
+	for( int r = 0; r < rows; r++ ) {
+		tinput->setValue(r, numInputs, bias);
+	}
+	numInputs++;
+	
 
 	if(DEBUG) {
-		cout << "Training Inputs..." << endl;
+		cout << "\nTraining Inputs..." << endl;
 		tinput->printAll();
-		cout << "Training Outputs..." << endl;
+		cout << "\nTraining Outputs..." << endl;
 		toutput->printAll();
+	}	
+	
+	
+	/**** Training ****/
+	
+	double * tempResults = new double[numOutputs];
+	double * activatedResults = new double[numOutputs];
+	Matrix * results = new Matrix(rows, numOutputs);
+	Matrix * w = new Matrix(numInputs, numOutputs, 1);
+	if(DEBUG) {
+		cout << "\nInitialized Weight matrix..." << endl;
+		w->printAll();
+	}	
+	
+	for( int t = 0; t < attempts; t++ ) {
+		for( int r = 0; r < rows; r++ ) { 					// Each row in training set
+
+			// Multiply (dot product? meh) inputs by weight matrix
+			for( int out = 0; out < numOutputs; out++ ) { 	// Each output
+				for( int i = 0; i < numInputs; i++ ) { 		// Each input
+					tempResults[out] += tinput->getValue(r, i) * w->getValue(i, out);
+				}			
+			}
+			
+			// ACTIVATE ALL NEURONZZZZZZZZZZZZZ
+			// bwuahahah		
+			for( int i = 0; i < numOutputs; i++ ) {
+				activatedResults[i] =  activate(tempResults[i]);
+			}	
+
+			// UPDATE THE ALL THE WEIGHTS!
+			for( int i = 0; i < numInputs; i++ ) {
+				for( int j = 0; j < numOutputs; j++ ) {
+					w->setValue(i, j, (w->getValue(i,j) - eta * (activatedResults[j] - toutput->getValue(r, j) * tinput->getValue(r, j) ) ));
+				}
+			}			
+			
+			results->setRowToVec( activatedResults, r); 
+		} // row in set loop
+	} // attempts loop
+	
+	if(DEBUG) {
+		cout << "\ntempResults..." << endl;
+		for( int i = 0; i < numOutputs; i++ ) {
+			cout << "tempResults[" << i << "]: " << tempResults[i] << endl;
+		}
+	}
+
+	if(DEBUG) {
+		cout << "\nactivatedResults..." << endl;
+		for( int i = 0; i < numOutputs; i++ ) {
+			cout << "activatedResults[" << i << "]: " << activatedResults[i] << endl;
+		}
+	}	
+	
+	if(DEBUG) {
+		cout << "\nFinal Weight matrix..." << endl;
+		w->printAll();
 	}
 	
+	cout << "\nResults" << endl;
+	results->printAll();
 	
 	
-	// *******************
-	// Training
-	
-	Matrix* w = new Matrix(rows, cols);
-	
-	
-	
-	
-	
-	
-	
-	
-	// *******************
 	// ** Test Data Input **
 	
 	temp = -99; // paranoia
@@ -89,7 +147,7 @@ int main() {
 	}	
 	
 	if(DEBUG) {
-		cout << "Test inputs matrix" << endl;
+		cout << "\nTest Inputs matrix" << endl;
 		test->printAll();
 	}
 	
@@ -98,4 +156,11 @@ int main() {
 	delete toutput;
 	delete test;
 	return(0);
+}
+
+int activate( double input ) {
+	if( input > 0 )
+		return 1;
+	else
+		return 0;
 }

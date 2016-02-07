@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include "matrix.h"
 
 using namespace std;
@@ -19,6 +20,37 @@ Matrix::Matrix( int rows, int cols ) {
 	for( int i = 0; i < numRows; i++) {
 		data[i] = new double[numCols];
 	}
+	
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			data[r][c] = 0.0;
+		}
+	}
+	
+		/*
+	for( auto &x : data ) {
+		for( auto &y : x ) {
+			cout << y << endl;
+		}
+	}*/
+}
+
+Matrix::Matrix( int rows, int cols, double range ) {
+	numRows = rows;
+	numCols = cols;
+	
+	data = new double*[numRows];
+	for( int i = 0; i < numRows; i++) {
+		data[i] = new double[numCols];
+	}
+	
+	srand(time(NULL));
+	
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			data[r][c] =  range - ((double)rand() / RAND_MAX);
+		}
+	}	
 }
 
 Matrix::Matrix( Matrix * init ) {
@@ -43,21 +75,6 @@ Matrix::~Matrix() {
 		delete data[i];
 	}
 	delete data;
-}
-
-void Matrix::initAllToValue( double value ) {
-	
-	/*
-	for( auto &x : data ) {
-		for( auto &y : x ) {
-			cout << y << endl;
-		}
-	}*/
-	for( int r = 0; r < numRows; r++ ) {
-		for(int c = 0; c < numCols; c++ ) {
-			data[r][c] = value;
-		}
-	}
 }
 
 // primary reason for using vectors, right here.

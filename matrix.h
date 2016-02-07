@@ -10,10 +10,10 @@ using namespace std;
 class Matrix {
 	public:
 		Matrix( int rows, int cols );
+		Matrix( int rows, int cols, double range );
 		Matrix( Matrix * initMat );
 		~Matrix();
 		
-		void initAllToValue( double value );
 		void initByRow( double * x, int row );
 		void initByCol( double * y, int col );
 		
