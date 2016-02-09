@@ -1,4 +1,4 @@
-BIN  = goes
+BIN  = nn
 CC   = g++
 SRCS = $(BIN).cpp matrix.h matrix.cpp
 LIBS = -lm $(BIN).cpp matrix.cpp
@@ -12,7 +12,7 @@ all:
 	make
 
 clean:
-	rm -f $(BIN) $(BIN).tar *~ $(BIN).output
+	rm -f $(BIN) $(BIN).tar *~ $(BIN).output nn
 
 tar:
 	tar -cvf $(BIN).tar $(SRCS) makefile
