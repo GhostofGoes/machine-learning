@@ -48,7 +48,8 @@ Matrix::Matrix( int rows, int cols, double range ) {
 	
 	for( int r = 0; r < numRows; r++ ) {
 		for( int c = 0; c < numCols; c++ ) {
-			data[r][c] =  range - ((double)rand() / RAND_MAX);
+			//data[r][c] =  range - ((double)rand() / RAND_MAX);
+			data[r][c] =  ((double)rand() / RAND_MAX) * range - (range/2.0);
 		}
 	}	
 }
