@@ -210,5 +210,5 @@ double activate( double input ) {
 }
 
 double sigmoid( double input ) {
-	return (2 / (1 + exp(-200 * input)) - 1);
+	return (2 / (1 + exp(-42 * input)) - 1);
 }
