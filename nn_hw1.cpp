@@ -2,7 +2,7 @@
 // Author: 		Christopher Goes
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
-// Description:	Assignment 2 main program logic
+// Description:	Assignments 1 and 2 main program logic
 
 #include <iostream>
 #include <iomanip>
@@ -15,11 +15,13 @@
 #define DEBUGINPUT 0
 #define DEBUG_RESULTS 0
 
+#define HW1 1
+#define HW2 1
 
 using namespace std;
 
-double activate( double input ); 	// Activation Function
-double sigmoid( double input );     // Sigmoid function
+double activateStep( double input ); 		// Step Function
+double activateSigmoid( double input );     // Sigmoid function
 
 int main() {
 	
@@ -73,8 +75,8 @@ int main() {
 		toutput->printAll();
 	}	
 	
-	// Normalize our input
-	tinput->normalize();
+	if(HW2)
+		tinput->normalize();
 	
 	/**** Training ****/
 	
@@ -96,28 +98,42 @@ int main() {
 			for( int out = 0; out < numOutputs; out++ ) { 	// Each output neuron
 				
 				// Reset tempResults
+				//tempResults[out] = 0.0;
 				tResult = 0.0;
 				
 				// Multiply inputs by weight matrix
 				for( int i = 0; i < numInputs; i++ ) { 		// Each input
+					//tempResults[out] += tinput->getValue(r, i) * w->getValue(i, out);
 					tResult += tinput->getValue(r, i) * w->getValue(i, out);
 				}
 				
-				// Calculate the sigmoid function
-				tResult = sigmoid(tResult);
+				// Activate neurons using appropriate function
+				if(HW1) {
+					//activatedResults[out] =  activateStep(tempResults[out]);
+					aResult =  activateStep(tResult);
+				}
+				else {
+					//activatedResults[out] = activateSigmoid(tempResults[out]);
+					aResult = activateSigmoid(tResult);
+				}
 				
-				// Activate neurons based on sigmoid result
-				aResult = activate(tResult);
-				
-				// Update the weight matrix
-				if( tResult != toutput->getValue(r, out) ) {
+				if( aResult != toutput->getValue(r, out) ) {
 					for( int i = 0; i < numInputs; i++ ) {
-						w->setValue(i, out, (w->getValue(i,out) - ((eta * (tResult - toutput->getValue(r, out))) * tinput->getValue(r, i))));
+						w->setValue(i, out, (w->getValue(i,out) - ((eta * (aResult - toutput->getValue(r, out))) * tinput->getValue(r, i))));
 					}
 				}
 				
 			}
 
+			// UPDATE THE ALL THE WEIGHTS!
+			/*for( int j = 0; j < numOutputs; j++ ) {
+				if( activatedResults[j] != toutput->getValue(r, j) ) {
+					for( int i = 0; i < numInputs; i++ ) {
+						w->setValue(i, j, (w->getValue(i,j) - ((eta * (activatedResults[j] - toutput->getValue(r, j))) * tinput->getValue(r, i))));
+					}
+				}
+			}*/
+			
 			// Save the results for debugging (put a flag on this?)
 			//results->setRowToVec( activatedResults, r); 
 		} // row in set loop
@@ -182,7 +198,10 @@ int main() {
 				tResult += test->getValue(r, i) * w->getValue(i, out);
 			}
 			
-			fResult = activateSigmoid(tResult);
+			if(HW1)
+				fResult =  activateStep(tResult);
+			else
+				fResult = activateSigmoid(tResult);
 			
 			cout <<  fixed <<  setprecision(2) <<  fResult << " ";
 		} // per-output loop
@@ -202,13 +221,16 @@ int main() {
 	return(0);
 }
 
-double activate( double input ) {
+double activateStep( double input ) {
 	if( input > 0.0 )
 		return 1.0;
 	else
 		return 0.0;
 }
 
-double sigmoid( double input ) {
-	return (1 / (1 + exp(-42 * input)))
+double activateSigmoid( double input ) {
+	if( (1 / (1 + exp(-42 * input))) > 0.0 )
+		return 1.0;
+	else
+		return 0.0;
 }

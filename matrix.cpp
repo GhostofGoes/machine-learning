@@ -186,14 +186,14 @@ Matrix * Matrix::inverse() {
 void Matrix::normalize() {
 	double norm = 0.0;
 	
-	for( int c = 0; c < numCols; c++ ) {
-		for( int r = 0; c < numRows; r++ ) {
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
 			norm += pow(data[r][c], 2);
 		}
 		
 		norm = sqrt(norm);
 		
-		for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
 			data[r][c] /= norm;
 		}
 		
