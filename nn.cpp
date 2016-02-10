@@ -90,28 +90,22 @@ int main() {
 	
 	for( int t = 0; t < attempts; t++ ) {
 		for( int r = 0; r < rows; r++ ) { 					// Each row in training set
-
-			// Clear tempResults
-			for (int i = 0; i < numOutputs; i++) {
-				tempResults[i] = 0.0;
-			}
-					
-			// Multiply inputs by weight matrix
-			for( int out = 0; out < numOutputs; out++ ) { 	// Each output
+			for( int out = 0; out < numOutputs; out++ ) { 	// Each output neuron
+				
+				// Reset tempResults
+				tempResults[out] = 0.0; 
+				
+				// Multiply inputs by weight matrix
 				for( int i = 0; i < numInputs; i++ ) { 		// Each input
 					tempResults[out] += tinput->getValue(r, i) * w->getValue(i, out);
-				}			
+				}
+				
+				// Activate neurons using appropriate function
+				if(HW1)
+					activatedResults[out] =  activateStep(tempResults[out]);
+				else
+					activatedResults[out] = activateSigmoid(tempResults[out]);
 			}
-			
-			// Activate neurons using appropriate function
-			for( int i = 0; i < numOutputs; i++ ) { 
-				if(HW1) {
-					activatedResults[i] =  activateStep(tempResults[i]);
-				}
-				else {
-					activatedResults[i] = activateSigmoid(tempResults[i]);
-				}
-			}	
 
 			// UPDATE THE ALL THE WEIGHTS!
 			for( int j = 0; j < numOutputs; j++ ) {
@@ -122,7 +116,8 @@ int main() {
 				}
 			}
 			
-			results->setRowToVec( activatedResults, r); // Save the results
+			// Save the results for debugging (put a flag on this?)
+			results->setRowToVec( activatedResults, r); 
 		} // row in set loop
 	} // attempts loop
 	
