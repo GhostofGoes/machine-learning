@@ -80,7 +80,7 @@ int main() {
 	
 	//double * tempResults = new double[numOutputs];
 	//double * activatedResults = new double[numOutputs];
-	//Matrix * results = new Matrix(rows, numOutputs);
+	Matrix * aResults = new Matrix(rows, numOutputs);
 	Matrix * w = new Matrix(numInputs, numOutputs, 2);
 	double tResult = -66.6; // the init values are paranoia for error catching
 	double aResult = -55.5;
@@ -99,7 +99,7 @@ int main() {
 				tResult = 0.0;
 				
 				// Multiply inputs by weight matrix
-				for( int i = 0; i < numInputs; i++ ) { 		// Each input
+				for( int i = 0; i < numInputs; i++ ) { 
 					tResult += tinput->getValue(r, i) * w->getValue(i, out);
 				}
 				
@@ -110,35 +110,35 @@ int main() {
 				aResult = activate(tResult);
 				
 				// Update the weight matrix
-				if( tResult != toutput->getValue(r, out) ) {
+				if( aResult != toutput->getValue(r, out) ) {
 					for( int i = 0; i < numInputs; i++ ) {
 						w->setValue(i, out, (w->getValue(i,out) - ((eta * (tResult - toutput->getValue(r, out))) * tinput->getValue(r, i))));
 					}
 				}
 				
-			}
-
-			// Save the results for debugging (put a flag on this?)
-			//results->setRowToVec( activatedResults, r); 
+				if(DEBUG) {
+					aResults->setValue(r, out, aResult);
+				}
+				
+			} // outputs loop
 		} // row in set loop
 	} // attempts loop
 	
-	/*
 	if(DEBUG) {
 		cout << "\nFinal Weight matrix..." << endl;
 		w->printAll();
 	}
 	
 	if (DEBUG) {
-	cout << "\nTraining Results" << endl;
-	results->printAll();
- }
+		cout << "\nActivated Training Results" << endl;
+		aResults->printAll();
+	}
  
 	if (DEBUG) {
-	cout <<  "What they should be" <<  endl;
-	toutput->printAll();
- }
-	*/
+		cout <<  "What they should be" <<  endl;
+		toutput->printAll();
+	}
+ 
 	// ** Test Data Input **
 	
 	temp = -99; // paranoia
@@ -182,7 +182,8 @@ int main() {
 				tResult += test->getValue(r, i) * w->getValue(i, out);
 			}
 			
-			fResult = activateSigmoid(tResult);
+			tResult = sigmoid(tResult);
+			fResult = activate(tResult);
 			
 			cout <<  fixed <<  setprecision(2) <<  fResult << " ";
 		} // per-output loop
@@ -194,7 +195,7 @@ int main() {
 	// Cleanup
 	//delete tempResults;
 	//delete activatedResults;
-	//delete results;
+	delete aResults;
 	delete w;
 	delete tinput;
 	delete toutput;
@@ -210,5 +211,5 @@ double activate( double input ) {
 }
 
 double sigmoid( double input ) {
-	return (1 / (1 + exp(-42 * input)))
+	return (2 / (1 + exp(-200 * input)) - 1);
 }
