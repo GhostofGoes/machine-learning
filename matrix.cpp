@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib>
+#include <cmath>
 #include "matrix.h"
 
 using namespace std;
@@ -181,6 +182,29 @@ Matrix * Matrix::inverse() {
 	Matrix * result = new Matrix(newRows, newCols);
 	
 }
+
+void Matrix::normalize() {
+	double norm = 0.0;
+	
+	for( int c = 0; c < numCols; c++ ) {
+		for( int r = 0; c < numRows; r++ ) {
+			norm += pow(data[r][c], 2);
+		}
+		
+		norm = sqrt(norm);
+		
+		for( int r = 0; r < numRows; r++ ) {
+			data[r][c] /= norm;
+		}
+		
+		norm = 0.0;
+	}
+	
+	
+
+	
+}
+
 
 double Matrix::getValue( int row, int col ) {
 	if( row >= numRows || col >= numCols ) {

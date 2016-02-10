@@ -8,16 +8,18 @@
 #include <iomanip>
 #include <cstdlib>
 #include <vector>
-//#include <cmath>
+#include <cmath>
 #include "matrix.h"
 
 #define DEBUG 0
-#define MATRIX 0
+#define DEBUGINPUT 0
+#define HW1 0
+#define HW2 1
 
 using namespace std;
 
-double activate( double input ); // activates a thing
-
+double activateStep( double input ); 		// Step Function
+double activateSigmoid( double input );     // Sigmoid function
 
 int main() {
 	
@@ -40,7 +42,7 @@ int main() {
 	Matrix* toutput = new Matrix(rows, numOutputs); 
 	
 	
-	if(DEBUG) {
+	if(DEBUGINPUT) {
 		cout << "Inputs: " << numInputs << "\nRows: " << rows << "\nCols: " << cols << endl;
 	}
 
@@ -64,7 +66,7 @@ int main() {
 	numInputs++;
 	
 
-	if(DEBUG) {
+	if(DEBUGINPUT) {
 		cout << "\nTraining Inputs..." << endl;
 		tinput->printAll();
 		cout << "\nTraining Outputs..." << endl;
@@ -84,9 +86,7 @@ int main() {
 		w->printAll();
 	}	
 	
-
-	
-	
+	// could put the calculation into a function...
 	for( int t = 0; t < attempts; t++ ) {
 		for( int r = 0; r < rows; r++ ) { 					// Each row in training set
 
@@ -101,8 +101,14 @@ int main() {
 				}			
 			}
 			
+			
 			for( int i = 0; i < numOutputs; i++ ) {
-				activatedResults[i] =  activate(tempResults[i]);
+				if(HW1) {
+					activatedResults[i] =  activateStep(tempResults[i]);
+				}
+				else {
+					activatedResults[i] = activateSigmoid(tempResults[i]);
+				}
 			}	
 
 			// UPDATE THE ALL THE WEIGHTS!
@@ -116,10 +122,6 @@ int main() {
 				}
 			}
 			
-			if(MATRIX) {
-				cout << "\nWeight matrix at point: " <<  r << endl;
-				w->printAll();
-			}				
 			results->setRowToVec( activatedResults, r);
 		} // row in set loop
 	} // attempts loop
@@ -179,7 +181,7 @@ int main() {
 	}
 	cols++;
 	
-	if(DEBUG) {
+	if(DEBUGINPUT) {
 		cout << "\nTest Inputs matrix" << endl;
 		test->printAll();
 	}
@@ -200,7 +202,12 @@ int main() {
 		}
 		
 		for( int i = 0; i < numOutputs; i++ ) {
-			activatedResults[i] =  activate(tempResults[i]);
+			if(HW1) {
+				activatedResults[i] =  activateStep(tempResults[i]);
+			}
+			else {
+				activatedResults[i] = activateSigmoid(tempResults[i]);
+			}
 		}	
 				
 		//results->setRowToVec(activatedResults, r);
@@ -221,9 +228,13 @@ int main() {
 	return(0);
 }
 
-double activate( double input ) {
+double activateStep( double input ) {
 	if( input > 0.0 )
 		return 1.0;
 	else
 		return 0.0;
+}
+
+double activateSigmoid( double input ) {
+		
 }

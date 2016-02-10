@@ -2,7 +2,7 @@ BIN  = nn
 CC   = g++
 SRCS = $(BIN).cpp matrix.h matrix.cpp
 LIBS = -lm $(BIN).cpp matrix.cpp
-CCFLAGS = -g -std=gnu++0x
+CCFLAGS = -g -std=gnu++11
 
 $(BIN): $(SRCS)
 	$(CC) $(CCFLAGS) $(OBJS) $(LIBS) -o $(BIN)

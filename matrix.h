@@ -23,6 +23,7 @@ class Matrix {
 		void add( Matrix * mat );
 		Matrix * transpose();
 		Matrix * inverse();
+		void normalize(); 		// normalizes data in the matrix
 		
 				
 		double * getRow( int row );
