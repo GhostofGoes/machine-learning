@@ -21,19 +21,20 @@ using namespace std;
 double activate( double input ); 	// Activation Function
 double sigmoid( double input );     // Sigmoid function
 
+// TODO: change matrix class to use vectors
+
 int main() {
 	
 	// Initialization
-	int numInputs = 0;
+	int numInputs = 0; // do you want a comment for this, non-existance comment monkey?
 	int rows = 0;
 	int cols = 0;
-	double temp = -99;
-	double bias = -1;
-	double eta = 0.25; // what the book uses
-	int attempts = 1000;
+	double temp = -99; // 99 bottles of brain juice in the bar matrix...
+	double bias = -1; // -1 is what the book uses.
+	double eta = 0.25; // 0.25 is what the book uses. open to tweaking.
+	int attempts = 1000; // if you're debugging the loop, SET THIS TO A SMALL NUMBER!
 	
 	/* Training Data Input */
-	
 	cin >> numInputs;
 	cin >> rows;
 	cin >> cols;
@@ -73,13 +74,11 @@ int main() {
 		toutput->printAll();
 	}	
 	
-	// Normalize our input
+	// Normalize our input (THIS COULD BE IMPROVED)
 	tinput->normalize();
 	
 	/**** Training ****/
 	
-	//double * tempResults = new double[numOutputs];
-	//double * activatedResults = new double[numOutputs];
 	Matrix * aResults = new Matrix(rows, numOutputs);
 	Matrix * w = new Matrix(numInputs, numOutputs, 2);
 	double tResult = -66.6; // the init values are paranoia for error catching
