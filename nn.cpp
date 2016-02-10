@@ -5,6 +5,7 @@
 // Description:	Assignments 1 and 2 main program logic
 
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 #include <vector>
 //#include <cmath>
@@ -204,10 +205,10 @@ int main() {
 				
 		//results->setRowToVec(activatedResults, r);
 		for (int i = 0; i < numOutputs; i++) {
-			cout << test->getValue(r, i) <<  " ";
+			cout << fixed <<  setprecision(2) <<  test->getValue(r, i) <<  " ";
 		}
 		for (int i = 0; i < numOutputs; i++) {
-			cout <<  activatedResults[i] << " ";
+			cout <<  fixed <<  setprecision(2) <<  activatedResults[i] << " ";
 		}
 		cout <<  endl;
 	} // row in set loop	
