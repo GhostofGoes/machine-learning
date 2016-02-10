@@ -11,9 +11,11 @@
 #include <cmath>
 #include "matrix.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #define DEBUGINPUT 0
-#define HW1 0
+#define DEBUG_RESULTS 0
+
+#define HW1 1
 #define HW2 1
 
 using namespace std;
@@ -86,23 +88,23 @@ int main() {
 		w->printAll();
 	}	
 	
-	// could put the calculation into a function...
 	for( int t = 0; t < attempts; t++ ) {
 		for( int r = 0; r < rows; r++ ) { 					// Each row in training set
 
+			// Clear tempResults
 			for (int i = 0; i < numOutputs; i++) {
-				tempResults[i] = 0;
+				tempResults[i] = 0.0;
 			}
 					
-			// Multiply (dot product? meh) inputs by weight matrix
+			// Multiply inputs by weight matrix
 			for( int out = 0; out < numOutputs; out++ ) { 	// Each output
 				for( int i = 0; i < numInputs; i++ ) { 		// Each input
 					tempResults[out] += tinput->getValue(r, i) * w->getValue(i, out);
 				}			
 			}
 			
-			
-			for( int i = 0; i < numOutputs; i++ ) {
+			// Activate neurons using appropriate function
+			for( int i = 0; i < numOutputs; i++ ) { 
 				if(HW1) {
 					activatedResults[i] =  activateStep(tempResults[i]);
 				}
@@ -114,36 +116,15 @@ int main() {
 			// UPDATE THE ALL THE WEIGHTS!
 			for( int j = 0; j < numOutputs; j++ ) {
 				if( activatedResults[j] != toutput->getValue(r, j) ) {
-					//cout << "activatedResults[" << j << "]: " << activatedResults[j] << endl;
-					//cout <<  "toutput[" <<  j <<  "]: " <<  toutput->getValue(r, j) <<  endl;
 					for( int i = 0; i < numInputs; i++ ) {
 						w->setValue(i, j, (w->getValue(i,j) - ((eta * (activatedResults[j] - toutput->getValue(r, j))) * tinput->getValue(r, i))));
 					}
 				}
 			}
 			
-			results->setRowToVec( activatedResults, r);
+			results->setRowToVec( activatedResults, r); // Save the results
 		} // row in set loop
 	} // attempts loop
-	
-	if (DEBUG) {
-		cout <<  "final weight matrix" <<  endl;
-		w->printAll();
-	}
-	
-	if(DEBUG) {
-		cout << "\ntempResults..." << endl;
-		for( int i = 0; i < numOutputs; i++ ) {
-			cout << "tempResults[" << i << "]: " << tempResults[i] << endl;
-		}
-	}
-
-	if(DEBUG) {
-		cout << "\nactivatedResults..." << endl;
-		for( int i = 0; i < numOutputs; i++ ) {
-			cout << "activatedResults[" << i << "]: " << activatedResults[i] << endl;
-		}
-	}	
 	
 	if(DEBUG) {
 		cout << "\nFinal Weight matrix..." << endl;
@@ -166,6 +147,8 @@ int main() {
 	cin >> rows;
 	cin >> cols;
 	Matrix* test = new Matrix(rows, cols + 1);
+	double tResult = -66.6;
+	double fResult = -42.0;
 
 	// Fill the matrix
 	for(int r = 0; r < rows; r++) {
@@ -189,39 +172,35 @@ int main() {
 	cout <<  "BEGIN TESTING" << endl;
 	
 	for( int r = 0; r < rows; r++ ) { 					// Each row in training set
-
-		for (int i = 0; i < numOutputs; i++) {
-			tempResults[i] = 0;
-		}
-				
-		// Multiply (dot product? meh) inputs by weight matrix
-		for( int out = 0; out < numOutputs; out++ ) { 	// Each output
-			for( int i = 0; i < numInputs; i++ ) { 		// Each input
-				tempResults[out] += test->getValue(r, i) * w->getValue(i, out);
-			}			
-		}
-		
-		for( int i = 0; i < numOutputs; i++ ) {
-			if(HW1) {
-				activatedResults[i] =  activateStep(tempResults[i]);
-			}
-			else {
-				activatedResults[i] = activateSigmoid(tempResults[i]);
-			}
-		}	
-				
-		//results->setRowToVec(activatedResults, r);
 		for (int i = 0; i < numOutputs; i++) {
 			cout << fixed <<  setprecision(2) <<  test->getValue(r, i) <<  " ";
 		}
-		for (int i = 0; i < numOutputs; i++) {
-			cout <<  fixed <<  setprecision(2) <<  activatedResults[i] << " ";
-		}
-		cout <<  endl;
+		
+		for( int out = 0; out < numOutputs; out++ ) { 	// Each output
+			
+			tResult = 0.0; // clear tempResults before we add
+			
+			for( int i = 0; i < numInputs; i++ ) { 		// Each input
+				tResult += test->getValue(r, i) * w->getValue(i, out);
+			}
+			
+			if(HW1)
+				fResult =  activateStep(tResult);
+			else
+				fResult = activateSigmoid(tResult);
+			
+			cout <<  fixed <<  setprecision(2) <<  fResult << " ";
+		} // per-output loop
+
+		cout <<  endl; // end the row's output
 	} // row in set loop	
 	
 	
 	// Cleanup
+	delete tempResults;
+	delete activatedResults;
+	delete results;
+	delete w;
 	delete tinput;
 	delete toutput;
 	delete test;

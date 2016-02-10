@@ -200,9 +200,6 @@ void Matrix::normalize() {
 		norm = 0.0;
 	}
 	
-	
-
-	
 }
 
 
