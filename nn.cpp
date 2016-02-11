@@ -31,8 +31,8 @@ int main() {
 	int cols = 0;
 	double temp = -99; // 99 bottles of brain juice in the bar matrix...
 	double bias = -1; // -1 is what the book uses.
-	double eta = 0.25; // 0.25 is what the book uses. open to tweaking.
-	int attempts = 1000; // if you're debugging the loop, SET THIS TO A SMALL NUMBER!
+	double eta = 0.025; // 0.25 is what the book uses. open to tweaking.
+	int attempts = 20000; // if you're debugging the loop, SET THIS TO A SMALL NUMBER!
 	
 	/* Training Data Input */
 	cin >> numInputs;
@@ -146,7 +146,11 @@ int main() {
 	Matrix* test = new Matrix(rows, cols + 1);
 	tResult = -66.6;
 	fResult = -42.0;
-
+	double * tempResults = new double[numOutputs];
+	double * finalResults = new double[numOutputs];
+	int prevMaxInd = 0;
+	double max = 0.0;
+	
 	// Fill the matrix
 	for(int r = 0; r < rows; r++) {
 		for(int c = 0; c < cols; c++) {
@@ -169,7 +173,7 @@ int main() {
 	cout <<  "BEGIN TESTING" << endl;
 	
 	for( int r = 0; r < rows; r++ ) { 					// Each row in training set
-		for (int i = 0; i < numOutputs; i++) {
+		for (int i = 0; i < (numInputs - 1); i++) {
 			cout << fixed <<  setprecision(2) <<  test->getValue(r, i) <<  " ";
 		}
 		
@@ -183,17 +187,38 @@ int main() {
 			
 			tResult = sigmoid(tResult);
 			fResult = activate(tResult);
+			tempResults[out] = tResult;
+			finalResults[out] = fResult;
 			
-			cout <<  fixed <<  setprecision(2) <<  fResult << " ";
 		} // per-output loop
-
+		/*
+		for( int i = 0; i < numOutputs; i++ ) {
+			if(finalResults[i] > 0.0 && tempResults[i] > max) {
+				if(i > 0) {
+					finalResults[prevMaxInd] = 0.0;
+				}
+				max = tempResults[i];
+				prevMaxInd = i;
+			}
+			else if(finalResults[i] > 0.0) {
+				finalResults[i] = 0.0;
+			}
+		}
+		*/
+		for( int i = 0; i < numOutputs; i++ ) {
+			cout <<  fixed <<  setprecision(0) <<  finalResults[i] << " ";
+		}
 		cout <<  endl; // end the row's output
+		max = 0.0;
+		prevMaxInd = 0;
 	} // row in set loop	
 	
 	
 	// Cleanup
 	//delete tempResults;
 	//delete activatedResults;
+	delete tempResults;
+	delete finalResults;
 	delete aResults;
 	delete w;
 	delete tinput;
@@ -210,5 +235,5 @@ double activate( double input ) {
 }
 
 double sigmoid( double input ) {
-	return (2 / (1 + exp(-42 * input)) - 1);
+	return (2 / (1 + exp(-25 * input)) - 1);
 }
