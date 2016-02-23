@@ -2,7 +2,7 @@
 // Author: 		Christopher Goes
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
-// Description:	Assignment 3 main program logic
+// Description:	Assignment 2 main program logic
 
 #include <iostream>
 #include <iomanip>
