@@ -26,25 +26,29 @@ double sigmoid( double input );     // Sigmoid function
 int main() {
 	
 	// Initialization
-	int numInputs = 0; // do you want a comment for this, non-existance comment monkey?
+	int numInputs = 0;
+	int numOutputs = 0;
 	int rows = 0;
 	int cols = 0;
-	double temp = -99; // 99 bottles of brain juice in the bar matrix...
+	double temp = -99;
 	double bias = -1; // -1 is what the book uses.
 	double eta = 0.025; // 0.25 is what the book uses. open to tweaking.
-	int attempts = 20000; // if you're debugging the loop, SET THIS TO A SMALL NUMBER!
+	int attempts = 5; // if debugging, SET THIS TO A SMALL NUMBER!
+	int num_hidden_layers = 1; // is this a thing
+	int num_hidden_nodes = 0;
 	
 	/* Training Data Input */
 	cin >> numInputs;
+	cin >> num_hidden_nodes;
 	cin >> rows;
 	cin >> cols;
-	int numOutputs = cols - numInputs;
+	numOutputs = cols - numInputs;
+	
 	Matrix* tinput = new Matrix(rows, numInputs + 1);
 	Matrix* toutput = new Matrix(rows, numOutputs); 
 	
-	
 	if(DEBUGINPUT) {
-		cout << "Inputs: " << numInputs << "\nRows: " << rows << "\nCols: " << cols << endl;
+		cout << "Inputs: " << numInputs << "\nHidden Nodes: " << num_hidden_nodes << "\nRows: " << rows << "\nCols: " << cols << endl;
 	}
 
 	// Fill the matrix
@@ -82,7 +86,7 @@ int main() {
 	Matrix * aResults = new Matrix(rows, numOutputs);
 	Matrix * w = new Matrix(numInputs, numOutputs, 2);
 	double tResult = -66.6; // the init values are paranoia for error catching
-	double aResult = -55.5;
+	double aResult = -55.0;
 	double fResult = -42.0;
 	
 	if(DEBUG) {
@@ -191,20 +195,7 @@ int main() {
 			finalResults[out] = fResult;
 			
 		} // per-output loop
-		/*
-		for( int i = 0; i < numOutputs; i++ ) {
-			if(finalResults[i] > 0.0 && tempResults[i] > max) {
-				if(i > 0) {
-					finalResults[prevMaxInd] = 0.0;
-				}
-				max = tempResults[i];
-				prevMaxInd = i;
-			}
-			else if(finalResults[i] > 0.0) {
-				finalResults[i] = 0.0;
-			}
-		}
-		*/
+
 		for( int i = 0; i < numOutputs; i++ ) {
 			cout <<  fixed <<  setprecision(0) <<  finalResults[i] << " ";
 		}
@@ -215,8 +206,6 @@ int main() {
 	
 	
 	// Cleanup
-	//delete tempResults;
-	//delete activatedResults;
 	delete tempResults;
 	delete finalResults;
 	delete aResults;
