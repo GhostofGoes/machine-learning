@@ -13,10 +13,15 @@
 using namespace std;
 // TODO: write a unit test?
 
+Matrix::Matrix() {
+	numRows = 0;
+	numCols = 0;
+}
+
 Matrix::Matrix( int rows, int cols ) {
 	numRows = rows;
 	numCols = cols;
-	
+	/*
 	data = new double*[numRows];
 	for( int i = 0; i < numRows; i++) {
 		data[i] = new double[numCols];
@@ -27,7 +32,7 @@ Matrix::Matrix( int rows, int cols ) {
 			data[r][c] = 0.0;
 		}
 	}
-	
+	*/
 		/*
 	for( auto &x : data ) {
 		for( auto &y : x ) {
@@ -40,10 +45,12 @@ Matrix::Matrix( int rows, int cols, double range ) {
 	numRows = rows;
 	numCols = cols;
 	
+	/*
 	data = new double*[numRows];
 	for( int i = 0; i < numRows; i++) {
 		data[i] = new double[numCols];
 	}
+	*/
 	
 	srand(time(NULL));
 	
@@ -59,24 +66,29 @@ Matrix::Matrix( Matrix * init ) {
 	numRows = init->getNumRows();
 	numCols = init->getNumCols();
 	
+	/*
 	data = new double*[numRows];
 	for( int i = 0; i < numRows; i++) {
 		data[i] = new double[numCols];
 	}
+	*/
 	
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
 			data[i][j] = init->getValue(i, j);
+			// data[i] = init[i];
 		}
 	}
 	
 }
 
 Matrix::~Matrix() {
+/*
 	for( int i = 0; i < numRows; i++ ) {
 		delete data[i];
 	}
 	delete data;
+	*/
 }
 
 // primary reason for using vectors, right here.
@@ -213,12 +225,12 @@ double Matrix::getValue( int row, int col ) {
 	}
 }
 
-double * Matrix::getRow( int row ) {
+vector<double> Matrix::getRow( int row ) {
 	return data[row];
 }
 
-double * Matrix::getCol( int col ) {
-	// tbd, dynamic memory issues
+vector<double> Matrix::getCol( int col ) {
+	// tbd, dynamic memory issues (which, hey, vectors fix?)
 }
 
 void Matrix::setValue( int row, int col, double value ) {
@@ -281,4 +293,12 @@ void Matrix::printCol( int col ) {
 		cout << " " << data[i][col];
 	}
 	cout << endl;
+}
+
+vector<double> Matrix::operator[]( int row ) {
+
+}
+
+vector<double> Matrix::operator()( int col ) {
+
 }
