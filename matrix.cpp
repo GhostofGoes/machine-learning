@@ -21,6 +21,9 @@ Matrix::Matrix() {
 Matrix::Matrix( int rows, int cols ) {
 	numRows = rows;
 	numCols = cols;
+	data.reserve(rows);
+	for ( auto x : data )
+		x.reserve(cols);
 	/*
 	data = new double*[numRows];
 	for( int i = 0; i < numRows; i++) {
@@ -33,7 +36,7 @@ Matrix::Matrix( int rows, int cols ) {
 		}
 	}
 	*/
-		/*
+	/*
 	for( auto &x : data ) {
 		for( auto &y : x ) {
 			cout << y << endl;
@@ -44,13 +47,6 @@ Matrix::Matrix( int rows, int cols ) {
 Matrix::Matrix( int rows, int cols, double range ) {
 	numRows = rows;
 	numCols = cols;
-	
-	/*
-	data = new double*[numRows];
-	for( int i = 0; i < numRows; i++) {
-		data[i] = new double[numCols];
-	}
-	*/
 	
 	srand(time(NULL));
 	
@@ -83,17 +79,12 @@ Matrix::Matrix( Matrix * init ) {
 }
 
 Matrix::~Matrix() {
-/*
-	for( int i = 0; i < numRows; i++ ) {
-		delete data[i];
-	}
-	delete data;
-	*/
+	// empty destructor for now
 }
 
 
 // Scalar multiplication
-void Matrix::multiply( double scalar ) {
+void Matrix::s_mult( double scalar ) {
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
 			data[i][j] *= scalar;
@@ -102,7 +93,7 @@ void Matrix::multiply( double scalar ) {
 }
 
 // Matrix multiplication
-Matrix * Matrix::multiply( Matrix * mat ) {
+Matrix * Matrix::m_mult( Matrix * mat ) {
 	
 	// Check that matricies are able to be multiplied
 	if( numCols != mat->rows() ) {
@@ -127,15 +118,11 @@ Matrix * Matrix::multiply( Matrix * mat ) {
 	return result;
 }
 
-// Row Vector Multiplication
-Matrix * rv_mult( vector<double> rowvec ) {
+// Vector Multiplication
+Matrix * Matrix::v_mult( vector<double> vec ) {
 	
 }
 
-// Column Vector Multiplication
-Matrix * cv_mult( vector<double> colvec ) {
-	
-}
 
 
 // Scalar addition

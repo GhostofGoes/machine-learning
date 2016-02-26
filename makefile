@@ -12,7 +12,7 @@ all:
 	make
 
 clean:
-	rm -f $(BIN) $(BIN).tar *~ $(BIN).output nn
+	rm -f $(BIN) $(BIN).tar *~ $(BIN).output
 
 tar:
 	tar -cvf $(BIN).tar $(SRCS) makefile
