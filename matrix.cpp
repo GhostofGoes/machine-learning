@@ -24,24 +24,6 @@ Matrix::Matrix( int rows, int cols ) {
 	data.reserve(rows);
 	for ( auto x : data )
 		x.reserve(cols);
-	/*
-	data = new double*[numRows];
-	for( int i = 0; i < numRows; i++) {
-		data[i] = new double[numCols];
-	}
-	
-	for( int r = 0; r < numRows; r++ ) {
-		for( int c = 0; c < numCols; c++ ) {
-			data[r][c] = 0.0;
-		}
-	}
-	*/
-	/*
-	for( auto &x : data ) {
-		for( auto &y : x ) {
-			cout << y << endl;
-		}
-	}*/
 }
 
 Matrix::Matrix( int rows, int cols, double range ) {
@@ -61,18 +43,10 @@ Matrix::Matrix( int rows, int cols, double range ) {
 Matrix::Matrix( Matrix * init ) {
 	numRows = init->rows();
 	numCols = init->cols();
-	
-	/*
-	data = new double*[numRows];
-	for( int i = 0; i < numRows; i++) {
-		data[i] = new double[numCols];
-	}
-	*/
-	
+
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
 			data[i][j] = init->getValue(i, j);
-			// data[i] = init[i];
 		}
 	}
 	
@@ -269,6 +243,7 @@ void Matrix::printCol( int col ) const {
 	cout << endl;
 }
 
+/*
 vector<double> Matrix::operator[]( int row ) {
 	return this->getRow(row);
 }
@@ -277,3 +252,4 @@ vector<double> Matrix::operator[]( int row ) {
 vector<double> Matrix::operator()( int col ) {
 	return this->getCol(col);
 }
+*/

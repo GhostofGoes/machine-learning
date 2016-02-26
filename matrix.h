@@ -41,8 +41,8 @@ class Matrix {
 	void 		printRow( int row ) const;
 	void 		printCol( int col ) const;
 	
-	vector<double> operator[]( int row );
-	vector<double> operator()( int col );
+	//vector<double> operator[]( int row );
+	//vector<double> operator()( int col );
 		
 	private:
 		vector< vector< double > > data;
