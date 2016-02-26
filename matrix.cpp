@@ -65,8 +65,9 @@ void Matrix::s_mult( double scalar ) {
 		}
 	}
 }
-
+  
 // Matrix multiplication
+// Possible memory leak? 
 Matrix * Matrix::m_mult( Matrix * mat ) {
 	
 	// Check that matricies are able to be multiplied
@@ -93,8 +94,25 @@ Matrix * Matrix::m_mult( Matrix * mat ) {
 }
 
 // Vector Multiplication
-Matrix * Matrix::v_mult( vector<double> vec ) {
+vector<double> Matrix::v_mult( vector<double> vec ) const {
+	vector<double> tempvec;
 	
+	if( vec.size() == numCols ) {
+		int temp = 0;
+		
+		for( int i = 0; i < numRows; i++ ) {
+			for( int j = 0; j < numCols; j++ ) {
+				temp += (data[i][j] * vec[j]);
+			}
+			tempvec[i] = temp;
+			temp = 0;
+		}
+	}
+	else {
+		cerr << "Vector size did not match number of columns in matrix" << endl;
+	}
+	
+	return tempvec;
 }
 
 

@@ -15,9 +15,9 @@ class Matrix {
 	Matrix( Matrix * initMat );
 	~Matrix();
 	
-	void 		s_mult( double scalar );
-	Matrix * 	m_mult( Matrix * mat );
-	Matrix * 	v_mult( vector<double> vec );
+	void 			s_mult( double scalar );
+	Matrix * 		m_mult( Matrix * mat );
+	vector<double> 	v_mult( vector<double> vec ) const;
 	
 	void 		add( double scalar );
 	void 		add( Matrix * mat );
