@@ -194,43 +194,46 @@ double Matrix::getValue( int row, int col ) const {
 }
 
 vector<double> Matrix::getRow( int row ) const {
-	return data[row];
+	if( row < 0 || row >= numRows ) {
+		cerr << "getRow out of bounds" << endl;
+		return data[0]; // meh
+	}	
+	return data[row]; // we can cheat for rows
 }
 
-// TODO
 vector<double> Matrix::getCol( int col ) const {
-	// tbd, dynamic memory issues (which, hey, vectors fix?)
+	vector<double> temp(numRows); // col vec size = number of rows
+	
+	if( col < 0 || col >= numCols )
+		cerr << "getCol out of bounds" << endl;
+	else
+		for( int i = 0; i < numRows; i++ )
+			temp[i] = data[i][col];
+
+	return temp;
 }
 
 
 void Matrix::setValue( int row, int col, double value ) {
-	if( row >= numRows || col >= numCols ) {
+	if( row >= numRows || col >= numCols )
 		cerr << "setValue out of bounds!" << endl;
-		return;
-	}
-	else {
+	else
 		data[row][col] = value;
-	}
 }
 
 void Matrix::setRow( vector<double> x, int row ) {
-	if( row >= numRows ) {
+	if( row >= numRows )
 		cerr << "setRowToVec out of bounds!" << endl;
-		return;
-	}	
 	else
 		data[row] = x;
 }
 
 void Matrix::setCol( vector<double> y, int col ) {
-	if( col >= numCols ) {
+	if( col >= numCols ) 
 		cerr << "setColToVec out of bounds!" << endl;
-		return;
-	}	
-	for( int i = 0; i < numCols; i++ )
-	{
-		data[i][col] = y[i];
-	}
+	else	
+		for( int i = 0; i < numCols; i++ )
+			data[i][col] = y[i];
 }
 
 int Matrix::rows() const {
