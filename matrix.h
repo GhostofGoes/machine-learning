@@ -15,11 +15,10 @@ class Matrix {
 		Matrix( Matrix * initMat );
 		~Matrix();
 		
-		void initByRow( double * x, int row );
-		void initByCol( double * y, int col );
-		
 		void multiply( double scalar );
 		Matrix * multiply( Matrix * mat );
+		Matrix * rv_mult( vector<double> rowvec );
+		Matrix * cv_mult( vector<double> colvec );
 		
 		void add( double scalar );
 		void add( Matrix * mat );
@@ -28,33 +27,23 @@ class Matrix {
 		Matrix * inverse();
 		void normalize(); 		// normalizes data in the matrix
 		
-		void s_mult( double scalar );
-		Matrix * m_mult( Matrix * mat );
-		Matrix * rv_mult( vector<double> rowvec );
-		Matrix * cv_mult( vector<double> colvec );
+		double 			getValue( int row, int col )  	const;
+		vector<double> 	getRow( int row ) 				const;
+		vector<double> 	getCol( int col ) 				const;
 		
-		vector<double> getRow( int row );
-		vector<double> getCol( int col );
-		
-		
-		
-		double getValue( int row, int col );
 		void setValue( int row, int col, double value );
+		void setRow( vector<double> x, int row );
+		void setCol( vector<double> y, int col );
 		
-		void setRowToVec( double * x, int row );
-		void setColToVec( double * y, int col );
+		int rows() const;
+		int cols() const;
 		
-		int getNumRows();
-		int getNumCols();
+		void printAll() const;
+		void printRow( int row ) const;
+		void printCol( int col ) const;
 		
-		void printAll();
-		void printRow( int row );
-		void printCol( int col );
-		
-		vector<double> &operator[]( int row );
-		vector<double> &operator()( int col );
-		
-		 
+		vector<double> operator[]( int row );
+		vector<double> operator()( int col );
 		
 	private:
 		vector< vector< double > > data;

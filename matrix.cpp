@@ -63,8 +63,8 @@ Matrix::Matrix( int rows, int cols, double range ) {
 }
 
 Matrix::Matrix( Matrix * init ) {
-	numRows = init->getNumRows();
-	numCols = init->getNumCols();
+	numRows = init->rows();
+	numCols = init->cols();
 	
 	/*
 	data = new double*[numRows];
@@ -91,26 +91,6 @@ Matrix::~Matrix() {
 	*/
 }
 
-// primary reason for using vectors, right here.
-// #BufferOverflow #BetterCodingPractices
-void Matrix::initByRow( double * x, int row ) {
-	if(x == NULL || row >= numRows ) {
-		return;
-	}
-	for( int c = 0; c < numCols; c++ ) {
-		data[row][c] = x[c];
-	}
-}
-
-void Matrix::initByCol( double * y, int col ) {
-	if(y == NULL || col >= numCols ) {
-		return;
-	}
-	for( int r = 0; r < numRows; r++ ) {
-		data[r][col] = y[r];
-	}	
-}
-
 
 // Scalar multiplication
 void Matrix::multiply( double scalar ) {
@@ -125,12 +105,12 @@ void Matrix::multiply( double scalar ) {
 Matrix * Matrix::multiply( Matrix * mat ) {
 	
 	// Check that matricies are able to be multiplied
-	if( numCols != mat->getNumRows() ) {
+	if( numCols != mat->rows() ) {
 		cerr << "#cols != #rows for multiplication!" << endl;
 		return NULL;
 	}
 	int newRows = numRows;
-	int newCols = mat->getNumCols();
+	int newCols = mat->cols();
 	int temp = 0;
 	Matrix * result = new Matrix(newRows, newCols);
 	
@@ -147,6 +127,17 @@ Matrix * Matrix::multiply( Matrix * mat ) {
 	return result;
 }
 
+// Row Vector Multiplication
+Matrix * rv_mult( vector<double> rowvec ) {
+	
+}
+
+// Column Vector Multiplication
+Matrix * cv_mult( vector<double> colvec ) {
+	
+}
+
+
 // Scalar addition
 void Matrix::add( double scalar ) {
 	for( int i = 0; i < numRows; i++ ) {
@@ -160,7 +151,7 @@ void Matrix::add( double scalar ) {
 void Matrix::add( Matrix * mat ) {
 	
 	// Check matricies are the same size
-	if( numRows != mat->getNumRows() || numCols != mat->getNumCols() ) {
+	if( numRows != mat->rows() || numCols != mat->cols() ) {
 		cerr << "Matrix sizes don't match for addition!" << endl;
 		return;
 	}	
@@ -184,7 +175,6 @@ Matrix * Matrix::transpose() {
 			result->setValue(c, r, data[r][c]);
 		}
 	}
-
 }
 
 // TODO
@@ -208,30 +198,31 @@ void Matrix::normalize() {
 		for( int c = 0; c < numCols; c++ ) {
 			data[r][c] /= norm;
 		}
-		
 		norm = 0.0;
 	}
 	
 }
 
 
-double Matrix::getValue( int row, int col ) {
+double Matrix::getValue( int row, int col ) const {
 	if( row >= numRows || col >= numCols ) {
 		cerr << "getValue out of bounds!" << endl;
 		return -50.0;
 	}
-	else {
-		return data[row][col];
-	}
+		else {
+			return data[row][col];
+		}
 }
 
-vector<double> Matrix::getRow( int row ) {
+vector<double> Matrix::getRow( int row ) const {
 	return data[row];
 }
 
-vector<double> Matrix::getCol( int col ) {
+// TODO
+vector<double> Matrix::getCol( int col ) const {
 	// tbd, dynamic memory issues (which, hey, vectors fix?)
 }
+
 
 void Matrix::setValue( int row, int col, double value ) {
 	if( row >= numRows || col >= numCols ) {
@@ -243,20 +234,16 @@ void Matrix::setValue( int row, int col, double value ) {
 	}
 }
 
-// possible buffer overflow here
-void Matrix::setRowToVec( double * x, int row ) {
+void Matrix::setRow( vector<double> x, int row ) {
 	if( row >= numRows ) {
 		cerr << "setRowToVec out of bounds!" << endl;
 		return;
 	}	
-	for( int i = 0; i < numCols; i++ )
-	{
-		data[row][i] = x[i];
-	}
+	else
+		data[row] = x;
 }
 
-// and here
-void Matrix::setColToVec( double * y, int col ) {
+void Matrix::setCol( vector<double> y, int col ) {
 	if( col >= numCols ) {
 		cerr << "setColToVec out of bounds!" << endl;
 		return;
@@ -264,31 +251,31 @@ void Matrix::setColToVec( double * y, int col ) {
 	for( int i = 0; i < numCols; i++ )
 	{
 		data[i][col] = y[i];
-	}	
+	}
 }
 
-int Matrix::getNumRows() {
+int Matrix::rows() const {
 	return numRows;
 }
 
-int Matrix::getNumCols() {
+int Matrix::cols() const {
 	return numCols;
 }
 
 
-void Matrix::printAll() {
+void Matrix::printAll() const {
 	for( int i = 0; i < numRows; i++ ) {
 		printRow(i);
 	}
 }
-void Matrix::printRow( int row ) {
+void Matrix::printRow( int row ) const {
 	for( int i = 0; i < numCols; i++ ) {
 		cout << " " << data[row][i];
 	}
 	cout << endl;
 }
 
-void Matrix::printCol( int col ) {
+void Matrix::printCol( int col ) const {
 	for( int i = 0; i < numRows; i++ ) {
 		cout << " " << data[i][col];
 	}
@@ -296,9 +283,10 @@ void Matrix::printCol( int col ) {
 }
 
 vector<double> Matrix::operator[]( int row ) {
-
+	return this->getRow(row);
 }
 
+// TODO will this cause issues with calling constructor?
 vector<double> Matrix::operator()( int col ) {
-
+	return this->getCol(col);
 }
