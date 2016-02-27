@@ -21,8 +21,6 @@ using namespace std;
 double activate( double input ); 	// Activation Function
 double sigmoid( double input );     // Sigmoid function
 
-// TODO: change matrix class to use vectors
-
 int main() {
 	
 	// Initialization
@@ -39,7 +37,7 @@ int main() {
 	
 	/* Training Data Input */
 	cin >> numInputs;
-	cin >> num_hidden_nodes;
+	//cin >> num_hidden_nodes;
 	cin >> rows;
 	cin >> cols;
 	numOutputs = cols - numInputs;
@@ -50,7 +48,7 @@ int main() {
 	if(DEBUGINPUT) {
 		cout << "Inputs: " << numInputs << "\nHidden Nodes: " << num_hidden_nodes << "\nRows: " << rows << "\nCols: " << cols << endl;
 	}
-
+	
 	// Fill the matrix
 	for(int r = 0; r < rows; r++) {
 		for(int c = 0; c < numInputs; c++) {
@@ -60,7 +58,7 @@ int main() {
 		
 		for(int c = 0; c < numOutputs; c++ ) {
 			cin >> temp;
-			toutput->setValue( r, c, temp);			
+			toutput->setValue( r, c, temp);	
 		}
 	}
 	
@@ -77,9 +75,9 @@ int main() {
 		cout << "\nTraining Outputs..." << endl;
 		toutput->printAll();
 	}	
-	
+
 	// Normalize our input (THIS COULD BE IMPROVED)
-	tinput->normalize();
+	//tinput->normalize();
 	
 	/**** Training ****/
 	
@@ -206,6 +204,7 @@ int main() {
 	
 	
 	// Cleanup
+	/*
 	delete tempResults;
 	delete finalResults;
 	delete aResults;
@@ -213,6 +212,7 @@ int main() {
 	delete tinput;
 	delete toutput;
 	delete test;
+	*/
 	return(0);
 }
 

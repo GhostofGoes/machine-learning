@@ -21,15 +21,25 @@ Matrix::Matrix() {
 Matrix::Matrix( int rows, int cols ) {
 	numRows = rows;
 	numCols = cols;
-	data.reserve(rows);
-	for ( auto x : data )
-		x.reserve(cols);
+	vector< vector< double > > temp (rows, vector<double>(cols, 0));
+	
+	for ( vector<double> x : temp )
+		temp.reserve(cols);
+	
+	data = temp;
 }
+
 
 Matrix::Matrix( int rows, int cols, double range ) {
 	numRows = rows;
 	numCols = cols;
+	vector< vector< double > > temp (rows, vector<double>(cols, 0));
 	
+	for ( vector<double> x : temp )
+		temp.reserve(cols);
+	
+	data = temp;
+		
 	srand(time(NULL));
 	
 	for( int r = 0; r < numRows; r++ ) {
@@ -43,13 +53,18 @@ Matrix::Matrix( int rows, int cols, double range ) {
 Matrix::Matrix( Matrix * init ) {
 	numRows = init->rows();
 	numCols = init->cols();
-
+	vector< vector< double > > temp (numRows, vector<double>(numCols, 0));
+	
+	for ( vector<double> x : temp )
+		temp.reserve(numCols);
+	
+	data = temp;
+	
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
 			data[i][j] = init->getValue(i, j);
 		}
 	}
-	
 }
 
 Matrix::~Matrix() {
@@ -115,8 +130,6 @@ vector<double> Matrix::v_mult( vector<double> vec ) const {
 	return tempvec;
 }
 
-
-
 // Scalar addition
 void Matrix::add( double scalar ) {
 	for( int i = 0; i < numRows; i++ ) {
@@ -179,7 +192,6 @@ void Matrix::normalize() {
 		}
 		norm = 0.0;
 	}
-	
 }
 
 
@@ -188,9 +200,9 @@ double Matrix::getValue( int row, int col ) const {
 		cerr << "getValue out of bounds!" << endl;
 		return -50.0;
 	}
-		else {
-			return data[row][col];
-		}
+	else {
+		return data[row][col];
+	}
 }
 
 vector<double> Matrix::getRow( int row ) const {
