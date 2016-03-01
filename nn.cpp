@@ -35,8 +35,8 @@ int main() {
 	double temp = -99;
 	double bias = -1; // -1 is what the book uses.
 	double eta = 0.025; // 0.25 is what the book uses. open to tweaking.
-	int attempts = 5; // if debugging, SET THIS TO A SMALL NUMBER!
-	int num_hidden_layers = 1; // is this a thing
+	int attempts = 1; // if debugging, SET THIS TO A SMALL NUMBER!
+	//int num_hidden_layers = 1; // is this a thing
 	int num_hidden_nodes = 0;
 	double max = 1;
 	double min = 1;
@@ -49,7 +49,7 @@ int main() {
 	cin >> cols;
 	numOutputs = cols - numInputs;
 	
-	Matrix* tinput = new Matrix(rows, numInputs + 1);
+	Matrix* tinput = new Matrix(rows, numInputs + 1); // +1 for bias
 	Matrix* toutput = new Matrix(rows, numOutputs); 
 	
 	if(DEBUGINPUT) {
@@ -157,7 +157,7 @@ int main() {
 			y->sigmoid();
 			
 			// output error
-			t = t->sub(y);
+			t->subSelf(y);
 			t = t->dot(y);
 			y->scalarPreSub(1.0);
 			deltao = t->dot(y);
@@ -175,7 +175,7 @@ int main() {
 			tempmat = hVec->transpose();
 			tempmat = tempmat->dot(deltao);
 			tempmat = tempmat->dot(eta);
-			ow = ow->add(tempmat);
+			ow->addSelf(tempmat);
 			
 			deltah->data[0].pop_back();
 			deltah->numCols--;
@@ -183,7 +183,7 @@ int main() {
 			tempmat = inVec->transpose();
 			tempmat = inVec->dot(deltah);
 			tempmat = tempmat->dot(eta);
-			hw = hw->add(tempmat);
+			hw->addSelf(tempmat);
 			
 			delete deltao;
 			delete deltah;
@@ -206,7 +206,7 @@ int main() {
 	for( int r = 0; r < testRows; r++ ) { // Each row in testing set
 		inVec = testInput->getRow(r);
 		
-		for (int i = 0; i < (numInputs - 1); i++) {
+		for (int i = 0; i < testCols; i++) {
 			cout << fixed <<  setprecision(2) <<  testInput->getValue(r, i) <<  " ";
 		}
 

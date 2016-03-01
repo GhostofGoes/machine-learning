@@ -75,21 +75,21 @@ Matrix * Matrix::dot( double scalar ) const {
 Matrix * Matrix::dot( Matrix * mat ) const {
 	Matrix * result;
 	
-	if( mat->rows() == 1 && numCols == 1) {
+	if( mat->rows() == 1 && (mat->cols() == numCols) ) {
 		result = new Matrix( numRows, mat->cols() );
 		for( int r = 0; r < numRows; r++ ) {
 			for( int c = 0; c < mat->cols(); c++ ) {
-				result->setValue(r, c, mat->getValue(0, c) * data[r][0]);
+				result->setValue(r, c, mat->getValue(0, c) * data[r][c]);
 			}
 		}
 		return result;
 	}
 	
-	else if( mat->cols() == 1 && numRows == 1 ) {
+		else if( mat->cols() == 1 && (mat->rows() == numRows) ) {
 		result = new Matrix( mat->rows(), numCols );
 		for( int r = 0; r < mat->rows(); r++ ) {
 			for( int c = 0; c < numCols; c++ ) {
-				result->setValue(r, c, mat->getValue(r, 0) * data[0][c]);
+				result->setValue(r, c, mat->getValue(r, 0) * data[r][c]);
 			}
 		}
 		return result;
@@ -132,21 +132,21 @@ Matrix * Matrix::add( double scalar ) const {
 Matrix * Matrix::add( Matrix * mat ) const {
 	Matrix * result;
 	
-	if( mat->rows() == 1 && numCols == 1) {
+	if( mat->rows() == 1 && (mat->cols() == numCols) ) {
 		result = new Matrix( numRows, mat->cols() );
 		for( int r = 0; r < numRows; r++ ) {
 			for( int c = 0; c < mat->cols(); c++ ) {
-				result->setValue(r, c, mat->getValue(0, c) + data[r][0]);
+				result->setValue(r, c, mat->getValue(0, c) + data[r][c]);
 			}
 		}
 		return result;
 	}
 		
-	else if( mat->cols() == 1 && numRows == 1 ) {
+	else if( mat->cols() == 1 && (mat->rows() == numRows) ) {
 		result = new Matrix( mat->rows(), numCols );
 		for( int r = 0; r < mat->rows(); r++ ) {
 			for( int c = 0; c < numCols; c++ ) {
-				result->setValue(r, c, mat->getValue(r, 0) + data[0][c]);
+				result->setValue(r, c, mat->getValue(r, 0) + data[r][c]);
 			}
 		}
 		return result;
@@ -175,6 +175,13 @@ Matrix * Matrix::add( Matrix * mat ) const {
 		}
 }
 
+void Matrix::addSelf( Matrix * mat ) {
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			data[r][c] += mat->getValue(r, c);
+		}
+	}	
+}
 
 Matrix * Matrix::sub( double scalar ) const {
 	Matrix * result = new Matrix(numRows, numCols);
@@ -206,6 +213,13 @@ Matrix * Matrix::sub( Matrix * mat ) const {
 	return result;	
 }
 
+void Matrix::subSelf( Matrix * mat ) {
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			data[r][c] -= mat->getValue(r, c);
+		}
+	}	
+}
 
 Matrix * Matrix::transpose() const {
 	Matrix * result = new Matrix(numRows, numCols);
