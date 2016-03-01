@@ -36,6 +36,8 @@ int main() {
 	int attempts = 5; // if debugging, SET THIS TO A SMALL NUMBER!
 	int num_hidden_layers = 1; // is this a thing
 	int num_hidden_nodes = 0;
+	double max = 1;
+	double min = 1;
 	
 	
 	
@@ -57,11 +59,15 @@ int main() {
 	for(int r = 0; r < rows; r++) {
 		for(int c = 0; c < numInputs; c++) {
 			cin >> temp;
+			if( temp > max ) max = temp;
+			else if( temp < min ) min = temp;
 			tinput->setValue( r, c, temp);
 		}
 		
 		for(int c = 0; c < numOutputs; c++ ) {
 			cin >> temp;
+			if( temp > max ) max = temp;
+			else if( temp < min ) min = temp;
 			toutput->setValue( r, c, temp);	
 		}
 	}
@@ -90,6 +96,8 @@ int main() {
 	for(int r = 0; r < testRows; r++) {
 		for(int c = 0; c < testCols; c++) {
 			cin >> temp;
+			if( temp > max ) max = temp;
+			else if( temp < min ) min = temp;
 			testInput->setValue(r, c, temp);
 		}
 	}	
@@ -114,11 +122,6 @@ int main() {
 	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
 	Matrix * ow = new Matrix(numInputs + 1, numOutputs, 2); // +1 for the extra bias between hidden and output layers
 	Matrix * tempmat;
-	vector<double> inVec;
-	vector<double> outVec (numOutputs);
-	vector<double> testVec;
-	vector<double> oError (numOutputs);
-	vector<double> hError (numOutputs);
 	double tResult = -66.6; //init values are paranoia for error catching
 	double aResult = -55.0;
 	double fResult = -42.0;
@@ -130,15 +133,16 @@ int main() {
 	}
 
 	// Normalize our input (THIS COULD BE IMPROVED) TODO
-	tinput->normalize();
+	tinput->normalize(min, max);
 	
-	vector<double> deltah; // error in hidden layer
-	vector<double> deltao; // error in output layer
-	vector<double> a; // hidden layer output
-	vector<double> y; // output layer output
-	vector<double> hVec;	
-	vector<double> v;
-	vector<double> t;
+	Matrix * deltah; // error in hidden layer
+	Matrix * deltao; // error in output layer
+	Matrix * a; // hidden layer output
+	Matrix * y; // output layer output
+	Matrix * hVec;	
+	Matrix * inVec;
+	Matrix * v;
+	Matrix * t;
 	Matrix * sumh;
 	Matrix * sumo;
 	
@@ -148,130 +152,54 @@ int main() {
 		
 		
 		for( int r = 0; r < rows; r++ ) {
-			v = tinput->getRow(r);
+			inVec = tinput->getRow(r);
 			t = toutput->getRow(r);
-			sumh = new Matrix(hw);
-			sumo = new Matrix(ow);
 			
 			// hidden layer
-			a = hw->dot(t);
-			for( double &x : a ) {
-				x = sigmoid(x);
-			}
-			hVec.push_back(-1);
+			a = inVec->dot(hw);
+			a->sigmoid();
+			hVec = new Matrix(a);
+			hVec->data[0].push_back(bias);
+			hVec->numCols++;
 			
 			// output layer
-			y = ow->dot(hVec); // TODO probably a issue with num outputs here...
-			for( double &x : y ) {
-				x = sigmoid(x);
-			}
+			y = hVec->dot(hw);
+			y->sigmoid();
 			
 			// output error
-			for( int i = 0; i < numOutputs; i++) {
-				t[i] -= y[i];
-				t[i] *= y[i];
-				y[i] = 1 - y[i];
-				deltao[i] = t[i] * y[i];
-			}
-			
-			
+			t = t->sub(y);
+			t = t->dot(y);
+			y->scalarPreSub(1.0);
+			deltao = t->dot(y);
+				
 			// hidden error
 			deltah = hVec;
-			for( int i = 0; i < numInputs + 1; i++ ) {
-				deltah[i] *= (1 - deltah[i]);
-			}
-			tempmat = ow->transpose();
-			deltao = tempmat->dot(deltao);
-			for( int i = 0; i < numInputs + 1; i++ ) {
-				deltah[i] *= deltao[i];
-			}
-			
-			// update sums?
-			hw->add(
+			hVec->scalarPreSub(1.0);
+			deltah->dot(hVec);
+			hVec->scalarPreSub(1.0);
+			tempmat = deltao->dot(ow);
+			tempmat = tempmat->transpose();
+			deltah = deltah->dot(tempmat);
 			
 			// update matricies
-			sumh->dot(eta);
-			hw->add(sumh);
-			sumo->dot(eta);
-			ow->add(sumo);
+			tempmat = hVec->transpose();
+			tempmat = tempmat->dot(deltao);
+			tempmat = tempmat->dot(eta);
+			ow = ow->add(tempmat);
+			
+			deltah->data[0].pop_back();
+			deltah->numCols--;
+			
+			tempmat = inVec->transpose();
+			tempmat = inVec->dot(deltah);
+			tempmat = tempmat->dot(eta);
+			hw = hw->add(tempmat);
 			
 		} // rows
 				
 						
 	} // attempts	
-	
-	
-	
-		
-	// TODO randomize order rows are processed for each attempt
-	for( int attempt = 0; attempt < attempts; attempt++ ) {
-		// could use a range-based for using getRow...somehow
-		for( int r = 0; r < rows; r++ ) { //row in training set
-			testVec = toutput->getRow(r);
-			inVec = tinput->getRow(r);
-			
-			// Hidden Layer (s)
-			// Will eventually put a loop to handle more than one output
-			for( int out = 0; out < (numInputs - 1); out++ ) {
-				tResult = 0.0;
-				
-				// Multiply inputs by weight matrix
-				for( int i = 0; i < numInputs; i++ ) { 
-					tResult += inVec[i] * hw->getValue(i, out);
-				}
-				
-				tResult = sigmoid(tResult);
-				hVec[out] = tResult;
-			}
-			
-			hVec[numInputs] = bias;
-			
-			// Output Layer
-			for( int out = 0; out < numOutputs; out++ ) {
-				tResult = 0.0;
-				
-				for( int i = 0; i < numInputs; i++ ) { 
-					tResult += hVec[i] * ow->getValue(i, out);
-				}
-				tResult = sigmoid(tResult);
-				outVec[out] = tResult;
-			}
-			
-			// Compute error in output
-			for( int out = 0; out < numOutputs; out++ ) {
-				oError[out] = (outVec[out] - testVec[out]) * outVec[out] * (1 - outVec[out]);
-			}
-			
-			// Compute error in hidden
-			for( int out = 0; out < numOutputs; out++ ) {
-				for( int i = 0; i < numOutputs; i++ ) {
-					tResult = ow->getValue(out, i) * oError[i];
-				}
-				hError[out] = hVec[out] * (1 - hVec[out]) * tResult;
-			}			
-			
-			// Update output layer weight matrix
-			for( int out = 0; out < numOutputs; out++ ) {
-				for( int i = 0; i < numInputs; i++ ) {
-					tResult =  ow->getValue(i, out) - (eta * oError[out] * hVec[out]);
-					ow->setValue(i, out, tResult);
-				}
-			}
-			
-			// Update hidden layer weight matrix
-			for( int out = 0; out < numOutputs; out++ ) {
-				for( int i = 0; i < numInputs; i++ ) {
-					tResult = hw->getValue(i,  out) - (eta * hError[out] * inVec[out]);
-					hw->setValue(i, out, tResult);
-				}
-			}	
-		} // row in set loop
-	} // attempts loop
 
-	
-
-	
- 
  
 	//							//
 	//		 	Testing			//

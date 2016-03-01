@@ -33,8 +33,10 @@ class Matrix {
 	Matrix * 		transpose()	const;
 	Matrix * 		inverse()	const;
 	Matrix *		normalize() const; // the old normalize function from HW1/HW2
-	Matrix *		normalize( double min, double max )	const;
+	void			normalize( double min, double max );
 	
+	void			sigmoid();
+	void			scalarPreSub(double s);
 	// Cool
 	void			map( const void * func ); 		// func = function to map to every element in matrix
 	void			mapToRow( int row, const void * func );
@@ -42,8 +44,8 @@ class Matrix {
 	
 	// Boring
 	double 			getValue( int row, int col ) 	const;
-	vector<double> 	getRow( int row ) 				const;
-	vector<double> 	getCol( int col ) 				const;
+	Matrix * 		getRow( int row ) 				;
+	Matrix * 		getCol( int col ) 				;
 	
 	void 		setValue( int row, int col, double value );
 	void 		setRow( vector<double> x, int row );
@@ -59,9 +61,8 @@ class Matrix {
 	
 	//vector<double> operator[]( int row );
 	//vector<double> operator()( int col );
-		
-	private:
-		vector< vector< double > > data;
-		int numRows;
-		int numCols;
+	vector< vector< double > > data; // SCREW IT ALL
+	int numRows;
+	int numCols;
+
 };

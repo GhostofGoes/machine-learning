@@ -20,6 +20,7 @@ Matrix::Matrix( int rows, int cols ) {
 	vector< vector< double > > temp (rows, vector<double>(cols, 0));
 	for ( vector<double> x : temp )
 		temp.reserve(cols);
+	
 	data = temp;
 }
 
@@ -93,6 +94,7 @@ Matrix * Matrix::dot( Matrix * mat ) const {
 	return result;	
 }
 
+/*
 vector<double> Matrix::dot( vector<double> vec ) const {
 	vector<double> result;
 	
@@ -113,6 +115,7 @@ vector<double> Matrix::dot( vector<double> vec ) const {
 	}
 	return result;	
 }
+*/
 
 Matrix * Matrix::add( double scalar ) const {
 	Matrix * result = new Matrix(numRows, numCols);
@@ -143,6 +146,7 @@ Matrix * Matrix::add( Matrix * mat ) const {
 	
 	return result;
 }
+
 
 Matrix * Matrix::sub( double scalar ) const {
 	Matrix * result = new Matrix(numRows, numCols);
@@ -210,12 +214,29 @@ Matrix * Matrix::normalize() const {
 	return result;	
 }
 
-
-Matrix * Matrix::normalize( double min, double max ) const {
-	Matrix * result = new Matrix(numRows, numCols);
-	// TODO
-	return result;
+void Matrix::normalize( double min, double max ) {
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			data[r][c] = (data[r][c] - min) / (max - min);
+		}
+	}
 }
+
+void Matrix::sigmoid() {
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			data[r][c] = (2 / (1 + exp(-25 * data[r][c])) - 1);
+		}
+	}
+}
+
+void Matrix::scalarPreSub(double s) {
+	for( vector<double> &x : data )
+		for( double &y : x )
+			y = s - y;	
+}
+
+
 
 void Matrix::map( const void * func ) {
 	// TODO
@@ -241,24 +262,32 @@ double Matrix::getValue( int row, int col ) const {
 	}
 }
 
-vector<double> Matrix::getRow( int row ) const {
+Matrix * Matrix::getRow( int row )  {
+	vector<double> temp(numRows); // col vec size = number of rows
+	Matrix * tempmat = new Matrix( 1, numCols );	
+	
 	if( row < 0 || row >= numRows ) {
 		cerr << "getRow out of bounds" << endl;
-		return data[0]; // meh
+		return tempmat; // meh
 	}	
-	return data[row]; // we can cheat for rows
+	
+	tempmat->setRow(data[row], 0);
+	return tempmat; // we can cheat for rows
 }
 
-vector<double> Matrix::getCol( int col ) const {
+Matrix * Matrix::getCol( int col ) {
 	vector<double> temp(numRows); // col vec size = number of rows
-	
-	if( col < 0 || col >= numCols )
+	Matrix * tempmat = new Matrix( numRows, 1 );
+	if( col < 0 || col >= numCols ) {
 		cerr << "getCol out of bounds" << endl;
-	else
-		for( int i = 0; i < numRows; i++ )
-			temp[i] = data[i][col];
-
-	return temp;
+		return tempmat;
+	}
+	
+	for( int i = 0; i < numRows; i++ )
+		temp[i] = data[i][col];
+	
+	tempmat->setCol(temp, 0);
+	return tempmat;
 }
 
 
