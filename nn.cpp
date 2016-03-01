@@ -138,7 +138,7 @@ int main() {
 	// Normalize our input
 	tinput->normalize(min, max);
 	
-	// re-implementation
+	// re-re-implementation
 	for( int attempt = 0; attempt < attempts; attempt++ ) {
 		// TODO randomize order rows are done each attempt?
 		for( int r = 0; r < rows; r++ ) {

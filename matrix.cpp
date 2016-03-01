@@ -73,50 +73,29 @@ Matrix * Matrix::dot( double scalar ) const {
 }
 
 Matrix * Matrix::dot( Matrix * mat ) const {
-	Matrix * result;
+	Matrix * result = new Matrix( numRows, mat->cols() );
+	int temp = 0;
 	
-	if( mat->rows() == 1 && (mat->cols() == numCols) ) {
-		result = new Matrix( numRows, mat->cols() );
-		for( int r = 0; r < numRows; r++ ) {
-			for( int c = 0; c < mat->cols(); c++ ) {
-				result->setValue(r, c, mat->getValue(0, c) * data[r][c]);
-			}
-		}
-		return result;
-	}
-	
-		else if( mat->cols() == 1 && (mat->rows() == numRows) ) {
-		result = new Matrix( mat->rows(), numCols );
-		for( int r = 0; r < mat->rows(); r++ ) {
-			for( int c = 0; c < numCols; c++ ) {
-				result->setValue(r, c, mat->getValue(r, 0) * data[r][c]);
-			}
-		}
-		return result;
-	}
-	
-	else {
-		int newRows = numRows;
-		int newCols = mat->cols();
-		result = new Matrix(newRows, newCols);
-		int temp = 0;
-		
-		if( numCols != mat->rows() ) {
-			cerr << "#cols != #rows for multiplication!" << endl;
-			return result;
-		}
-		for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
-			for( int c = 0; c < newCols; c++ ) {
-				temp = 0;
-				for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
-					temp += ( data[r][j] * mat->getValue(j, c) );
+	for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
+		for( int c = 0; c < mat->cols(); c++ ) {
+			temp = 0;
+			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
+				temp += ( data[r][j] * mat->getValue(j, c) );
 			}
 			result->setValue(r, c, temp);
-			}
 		}
-		return result;			
 	}
+	return result;
+}
 
+Matrix * Matrix::mult( Matrix * mat ) {
+	Matrix * result = new Matrix( numRows, numCols );
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(r, c, data[r][j] + mat->getValue(r, c);
+		}
+	}
+	return result;
 }
 
 Matrix * Matrix::add( double scalar ) const {
@@ -130,49 +109,13 @@ Matrix * Matrix::add( double scalar ) const {
 }
 
 Matrix * Matrix::add( Matrix * mat ) const {
-	Matrix * result;
-	
-	if( mat->rows() == 1 && (mat->cols() == numCols) ) {
-		result = new Matrix( numRows, mat->cols() );
-		for( int r = 0; r < numRows; r++ ) {
-			for( int c = 0; c < mat->cols(); c++ ) {
-				result->setValue(r, c, mat->getValue(0, c) + data[r][c]);
-			}
+	Matrix * result = new Matrix( numRows, numCols );
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(r, c, mat->getValue(r, c) + data[r][c]);
 		}
-		return result;
 	}
-		
-	else if( mat->cols() == 1 && (mat->rows() == numRows) ) {
-		result = new Matrix( mat->rows(), numCols );
-		for( int r = 0; r < mat->rows(); r++ ) {
-			for( int c = 0; c < numCols; c++ ) {
-				result->setValue(r, c, mat->getValue(r, 0) + data[r][c]);
-			}
-		}
-		return result;
-	}
-				
-	else {
-		int newRows = numRows;
-		int newCols = mat->cols();
-		result = new Matrix(newRows, newCols);
-		int temp = 0;
-		
-		if( numCols != mat->rows() ) {
-			cerr << "#cols != #rows for addition!" << endl;
-			return result;
-		}
-				for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
-					for( int c = 0; c < newCols; c++ ) {
-						temp = 0;
-						for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
-							temp += ( data[r][j] + mat->getValue(j, c) );
-					}
-								result->setValue(r, c, temp);
-	}
-}
-		return result;			
-		}
+	return result;
 }
 
 void Matrix::addSelf( Matrix * mat ) {

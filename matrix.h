@@ -26,6 +26,7 @@ class Matrix {
 	
 	Matrix *		sub( double scalar )	const;
 	Matrix * 		sub( Matrix * mat ) 	const;
+	Matrix * 		mult( Matrix * mat );
 	void			subSelf( Matrix * mat );
 	
 	// Operate on self without modifying self
