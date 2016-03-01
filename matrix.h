@@ -15,16 +15,10 @@ class Matrix {
 	Matrix( Matrix * initMat );
 	~Matrix() {}
 	
-	// old shitty methods
-	void 			s_mult( double scalar );
-	Matrix * 		m_mult( Matrix * mat );
-	vector<double> 	v_mult( vector<double> vec ) const;
-	void 		add( double scalar );
-	void 		add( Matrix * mat );	
-	
-	
+	// old shitty methods (hey look they're gone)
 	
 	// new not-shitty methods
+	// TODO make sure i'm freeing matricies that are returned in the caller
 	Matrix *		dot( double scalar ) 		const;
 	Matrix *		dot( Matrix * mat )			const;
 	vector<double>	dot( vector<double> vec ) 	const;

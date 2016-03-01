@@ -58,82 +58,6 @@ Matrix::Matrix( Matrix * init ) {
 	}
 }
 
-void Matrix::s_mult( double scalar ) {
-	for( int i = 0; i < numRows; i++ ) {
-		for( int j = 0; j < numCols; j++ ) {
-			data[i][j] *= scalar;
-		}
-	}
-}
-  
-Matrix * Matrix::m_mult( Matrix * mat ) {
-	
-	// Check that matricies are able to be multiplied
-	if( numCols != mat->rows() ) {
-		cerr << "#cols != #rows for multiplication!" << endl;
-		return NULL;
-	}
-	int newRows = numRows;
-	int newCols = mat->cols();
-	int temp = 0;
-	Matrix * result = new Matrix(newRows, newCols);
-	
-	for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
-		for( int c = 0; c < newCols; c++ ) {
-			temp = 0;
-			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
-				temp += ( data[r][j] * mat->getValue(j, c) ); // this.getValue?
-			}
-			result->setValue(r, c, temp);
-		}
-	}
-	return result;
-}
-
-vector<double> Matrix::v_mult( vector<double> vec ) const {
-	vector<double> tempvec;
-	
-	if( vec.size() == numCols ) {
-		int temp = 0;
-		
-		for( int i = 0; i < numRows; i++ ) {
-			for( int j = 0; j < numCols; j++ ) {
-				temp += (data[i][j] * vec[j]);
-			}
-			tempvec[i] = temp;
-			temp = 0;
-		}
-	}
-	else {
-		cerr << "Vector size did not match number of columns in matrix" << endl;
-	}
-	return tempvec;
-}
-
-void Matrix::add( double scalar ) {
-	for( int i = 0; i < numRows; i++ ) {
-		for( int j = 0; j < numCols; j++ ) {
-			data[i][j] += scalar;
-		}
-	}	
-}
-
-void Matrix::add( Matrix * mat ) {
-	if( numRows != mat->rows() || numCols != mat->cols() ) {
-		cerr << "Matrix sizes don't match for addition!" << endl;
-		return;
-	}	
-	
-	for( int i = 0; i < numRows; i++ ) {
-		for( int j = 0; j < numCols; j++ ) {
-			data[i][j] += mat->getValue(i, j);
-		}
-	}	
-	
-}
-
-
-
 
 Matrix * Matrix::dot( double scalar ) const {
 	Matrix * result = new Matrix(numRows, numCols);
@@ -188,6 +112,37 @@ vector<double> Matrix::dot( vector<double> vec ) const {
 	}
 	return result;	
 }
+
+Matrix * Matrix::add( double scalar ) const {
+	Matrix * result = new Matrix(numRows, numCols);
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(r, c, data[r][c] + scalar);
+		}
+	}		
+	return result;
+}
+
+Matrix * Matrix::add( Matrix * mat ) const {
+	Matrix * result = new Matrix(numRows, numCols);
+	
+	if( mat->rows() != numRows ) {
+		cerr << "Rows don't match for matrix addition" << endl;
+		return result;
+	} else if ( mat->cols() != numCols ) {
+		cerr << "Cols don't match for matrix addition" << endl;
+		return result;
+	}
+	
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(r, c, data[r][c] + mat->getValue(r, c) );
+		}
+	}
+	
+	return result;
+}
+
 
 Matrix * Matrix::transpose() const {
 	Matrix * result = new Matrix(numRows, numCols);
