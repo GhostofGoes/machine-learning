@@ -37,7 +37,7 @@ int main() {
 	
 	/* Training Data Input */
 	cin >> numInputs;
-	//cin >> num_hidden_nodes;
+	cin >> num_hidden_nodes;
 	cin >> rows;
 	cin >> cols;
 	numOutputs = cols - numInputs;
@@ -77,70 +77,95 @@ int main() {
 	}	
 
 	// Normalize our input (THIS COULD BE IMPROVED)
-	//tinput->normalize();
+	tinput->normalize();
 	
-	/**** Training ****/
+	// * Training * //
 	
-	Matrix * aResults = new Matrix(rows, numOutputs);
-	Matrix * w = new Matrix(numInputs, numOutputs, 2);
-	double tResult = -66.6; // the init values are paranoia for error catching
+	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
+	Matrix * ow = new Matrix(numInputs, numOutputs, 2);
+	vector<double> inVec;
+	vector<double> hVec (numInputs - 1);
+	vector<double> outVec (numOutputs);
+	vector<double> testOut;
+	vector<double> oError (numOutputs);
+	vector<double> hError (numOutputs);
+	double tResult = -66.6; //init values are paranoia for error catching
 	double aResult = -55.0;
 	double fResult = -42.0;
 	
 	if(DEBUG) {
-		cout << "\nInitialized Weight matrix..." << endl;
-		w->printAll();
-	}	
+		cout << "\nInitialized Hidden Weight matrix..." << endl;
+		hw->printAll();
+	}
 	
+	// TODO randomize order rows are processed for each attempt
 	for( int t = 0; t < attempts; t++ ) {
-		for( int r = 0; r < rows; r++ ) { 					// Each row in training set
-			for( int out = 0; out < numOutputs; out++ ) { 	// Each output neuron
-				
-				// Reset tempResults
+		// could use a range-based for using getRow...somehow
+		for( int r = 0; r < rows; r++ ) { //row in training set
+			testOut = toutput->getRow(r);
+			inVec = tinput->getRow(r);
+			
+			// Hidden Layer (s)
+			// Will eventually put a loop to handle more than one output
+			for( int out = 0; out < (numInputs - 1); out++ ) {
 				tResult = 0.0;
 				
 				// Multiply inputs by weight matrix
 				for( int i = 0; i < numInputs; i++ ) { 
-					tResult += tinput->getValue(r, i) * w->getValue(i, out);
+					tResult += inVec[i] * hw->getValue(i, out);
 				}
 				
-				// Calculate the sigmoid function
 				tResult = sigmoid(tResult);
+				hVec[out] = tResult;
+			}
+			
+			hVec[numInputs] = bias;
+			
+			// Output Layer
+			for( int out = 0; out < numOutputs; out++ ) {
+				tResult = 0.0; // Reset tempResults
 				
-				// Activate neurons based on sigmoid result
-				aResult = activate(tResult);
-				
-				// Update the weight matrix
-				if( aResult != toutput->getValue(r, out) ) {
-					for( int i = 0; i < numInputs; i++ ) {
-						w->setValue(i, out, (w->getValue(i,out) - ((eta * (tResult - toutput->getValue(r, out))) * tinput->getValue(r, i))));
-					}
+				// Multiply inputs by weight matrix
+				for( int i = 0; i < numInputs; i++ ) { 
+					tResult += hVec[i] * ow->getValue(i, out);
 				}
-				
-				if(DEBUG) {
-					aResults->setValue(r, out, aResult);
+				tResult = sigmoid(tResult);
+				outVec[out] = tResult;
+			}
+			
+			// Compute error in output
+			for( int out = 0; out < numOutputs; out++ ) {
+				oError[out] = (outVec[out] - testVec[out]) * outVec[out] * (1 - outVec[out]);
+			}
+			
+			// Compute error in hidden
+			for( int out = 0; out < numOutputs; out++ ) {
+				for( int i = 0; i < numOutputs; i++ ) {
+					tResult = ow->getValue(out, i) * oError[i];
 				}
-				
-			} // outputs loop
+				hError[out] = hVec[out] * (1 - hVec[out]) * tResult;
+			}			
+			
+			// Update output layer weight matrix
+			for( int out = 0; out < numOutputs; out++ ) {
+				for( int i = 0; i < numInputs; i++ ) {
+					tResult =  ow->getValue(i, out) - (eta * oError[out] * hVec[out]);
+					ow->setValue(i, out, tResult);
+				}
+			}
+			
+			// Update hidden layer weight matrix
+			for( int out = 0; out < numOutputs; out++ ) {
+				for( int i = 0; i < numInputs; i++ ) {
+					tResult = hw->getValue - (eta * hError[out] * inVec[out]);
+					hw->setValue(i, out, tResult);
+				}
+			}	
 		} // row in set loop
 	} // attempts loop
-	
-	if(DEBUG) {
-		cout << "\nFinal Weight matrix..." << endl;
-		w->printAll();
-	}
-	
-	if (DEBUG) {
-		cout << "\nActivated Training Results" << endl;
-		aResults->printAll();
-	}
+
  
-	if (DEBUG) {
-		cout <<  "What they should be" <<  endl;
-		toutput->printAll();
-	}
- 
-	// ** Test Data Input **
+	// ** Test Data Input ** TODO move this before training
 	
 	temp = -99; // paranoia
 	cin >> rows;
@@ -174,16 +199,16 @@ int main() {
 	
 	cout <<  "BEGIN TESTING" << endl;
 	
-	for( int r = 0; r < rows; r++ ) { 					// Each row in training set
+	for( int r = 0; r < rows; r++ ) { // Each row in training set
 		for (int i = 0; i < (numInputs - 1); i++) {
 			cout << fixed <<  setprecision(2) <<  test->getValue(r, i) <<  " ";
 		}
 		
-		for( int out = 0; out < numOutputs; out++ ) { 	// Each output
+		for( int out = 0; out < numOutputs; out++ ) { // Each output
 			
 			tResult = 0.0; // clear tempResults before we add
 			
-			for( int i = 0; i < numInputs; i++ ) { 		// Each input
+			for( int i = 0; i < numInputs; i++ ) { // Each input
 				tResult += test->getValue(r, i) * w->getValue(i, out);
 			}
 			
@@ -204,15 +229,13 @@ int main() {
 	
 	
 	// Cleanup
-	/*
 	delete tempResults;
 	delete finalResults;
-	delete aResults;
-	delete w;
+	delete hw;
+	delete ow;
 	delete tinput;
 	delete toutput;
 	delete test;
-	*/
 	return(0);
 }
 

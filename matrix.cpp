@@ -13,19 +13,13 @@
 using namespace std;
 // TODO: write a unit test?
 
-Matrix::Matrix() {
-	numRows = 0;
-	numCols = 0;
-}
-
 Matrix::Matrix( int rows, int cols ) {
 	numRows = rows;
 	numCols = cols;
-	vector< vector< double > > temp (rows, vector<double>(cols, 0));
 	
+	vector< vector< double > > temp (rows, vector<double>(cols, 0));
 	for ( vector<double> x : temp )
 		temp.reserve(cols);
-	
 	data = temp;
 }
 
@@ -33,11 +27,10 @@ Matrix::Matrix( int rows, int cols ) {
 Matrix::Matrix( int rows, int cols, double range ) {
 	numRows = rows;
 	numCols = cols;
-	vector< vector< double > > temp (rows, vector<double>(cols, 0));
 	
+	vector< vector< double > > temp (rows, vector<double>(cols, 0));
 	for ( vector<double> x : temp )
 		temp.reserve(cols);
-	
 	data = temp;
 		
 	srand(time(NULL));
@@ -53,11 +46,10 @@ Matrix::Matrix( int rows, int cols, double range ) {
 Matrix::Matrix( Matrix * init ) {
 	numRows = init->rows();
 	numCols = init->cols();
-	vector< vector< double > > temp (numRows, vector<double>(numCols, 0));
 	
+	vector< vector< double > > temp (numRows, vector<double>(numCols, 0));
 	for ( vector<double> x : temp )
 		temp.reserve(numCols);
-	
 	data = temp;
 	
 	for( int i = 0; i < numRows; i++ ) {
@@ -65,10 +57,6 @@ Matrix::Matrix( Matrix * init ) {
 			data[i][j] = init->getValue(i, j);
 		}
 	}
-}
-
-Matrix::~Matrix() {
-	// empty destructor for now
 }
 
 

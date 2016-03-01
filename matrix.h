@@ -9,11 +9,11 @@ using namespace std;
 
 class Matrix {
 	public:
-	Matrix();
+	Matrix() { numRows = numCols = 0; }
 	Matrix( int rows, int cols );
 	Matrix( int rows, int cols, double range );
 	Matrix( Matrix * initMat );
-	~Matrix();
+	~Matrix() {}
 	
 	void 			s_mult( double scalar );
 	Matrix * 		m_mult( Matrix * mat );
