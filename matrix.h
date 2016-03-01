@@ -21,9 +21,11 @@ class Matrix {
 	
 	Matrix *		add( double scalar )	const;
 	Matrix *		add( Matrix * mat )		const;
+	void			addSelf( Matrix * mat );
 	
 	Matrix *		sub( double scalar )	const;
 	Matrix * 		sub( Matrix * mat ) 	const;
+	void			subSelf( Matrix * mat );
 	
 	// Operate on self without modifying self
 	Matrix * 		transpose()	const;
