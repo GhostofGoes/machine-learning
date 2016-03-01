@@ -110,10 +110,10 @@ int main() {
 	
 	// 						//
 	// 		* Training * 	//
+
 	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
 	Matrix * ow = new Matrix(numInputs, numOutputs, 2);
 	vector<double> inVec;
-	vector<double> hVec (numInputs - 1);
 	vector<double> outVec (numOutputs);
 	vector<double> testVec;
 	vector<double> oError (numOutputs);
@@ -130,6 +130,13 @@ int main() {
 	// Normalize our input (THIS COULD BE IMPROVED) TODO
 	tinput->normalize();
 	
+	vector<double> deltah; // error in hidden layer
+	vector<double> deltao; // error in output layer
+	vector<double> a; // hidden layer output
+	vector<double> y; // output layer output
+	vector<double> hVec;	
+
+	
 	
 	// re-implementation
 	for( int t = 0; t < attempts; t++ ) {
@@ -137,8 +144,23 @@ int main() {
 		
 		for( int r = 0; r < rows; r++ ) {
 			
+			// hidden layer
+			a = hw->dot(tinput->getRow(r));
+			for( double &x : a ) {
+				x = sigmoid(x);
+			}
+			hVec.push_back(-1);
+			
+			// output layer
+			y = ow->dot(hVec);
+			for( double &x : y ) {
+				x = sigmoid(x);
+			}
+			
+			// output error
 			
 			
+			// hidden error
 			
 		} // rows
 				

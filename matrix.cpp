@@ -144,6 +144,13 @@ Matrix * Matrix::add( Matrix * mat ) const {
 	return result;
 }
 
+Matrix * Matrix::sub( double scalar ) const {
+	
+}
+
+Matrix * Matrix::sub( Matrix * mat ) const {
+	
+}
 
 Matrix * Matrix::transpose() const {
 	Matrix * result = new Matrix(numRows, numCols);
