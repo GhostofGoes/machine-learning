@@ -145,11 +145,33 @@ Matrix * Matrix::add( Matrix * mat ) const {
 }
 
 Matrix * Matrix::sub( double scalar ) const {
-	
+	Matrix * result = new Matrix(numRows, numCols);
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(r, c, data[r][c] - scalar);
+		}
+	}		
+	return result;	
 }
 
 Matrix * Matrix::sub( Matrix * mat ) const {
+	Matrix * result = new Matrix(numRows, numCols);
 	
+	if( mat->rows() != numRows ) {
+		cerr << "Rows don't match for matrix addition" << endl;
+		return result;
+	} else if ( mat->cols() != numCols ) {
+		cerr << "Cols don't match for matrix addition" << endl;
+		return result;
+	}
+	
+	for( int r = 0; r < numRows; r++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(r, c, data[r][c] - mat->getValue(r, c) );
+		}
+	}
+	
+	return result;	
 }
 
 Matrix * Matrix::transpose() const {

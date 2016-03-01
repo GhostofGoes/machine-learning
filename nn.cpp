@@ -112,7 +112,8 @@ int main() {
 	// 		* Training * 	//
 
 	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
-	Matrix * ow = new Matrix(numInputs, numOutputs, 2);
+	Matrix * ow = new Matrix(numInputs + 1, numOutputs, 2); // +1 for the extra bias between hidden and output layers
+	Matrix * tempmat;
 	vector<double> inVec;
 	vector<double> outVec (numOutputs);
 	vector<double> testVec;
@@ -121,6 +122,7 @@ int main() {
 	double tResult = -66.6; //init values are paranoia for error catching
 	double aResult = -55.0;
 	double fResult = -42.0;
+	temp = -99;
 	
 	if(DEBUG) {
 		cout << "\nInitialized Hidden Weight matrix..." << endl;
@@ -135,32 +137,63 @@ int main() {
 	vector<double> a; // hidden layer output
 	vector<double> y; // output layer output
 	vector<double> hVec;	
-
+	vector<double> v;
+	vector<double> t;
+	Matrix * sumh;
+	Matrix * sumo;
 	
 	
 	// re-implementation
-	for( int t = 0; t < attempts; t++ ) {
+	for( int attempt = 0; attempt < attempts; attempt++ ) {
 		
 		
 		for( int r = 0; r < rows; r++ ) {
+			v = tinput->getRow(r);
+			t = toutput->getRow(r);
+			sumh = new Matrix(hw);
+			sumo = new Matrix(ow);
 			
 			// hidden layer
-			a = hw->dot(tinput->getRow(r));
+			a = hw->dot(t);
 			for( double &x : a ) {
 				x = sigmoid(x);
 			}
 			hVec.push_back(-1);
 			
 			// output layer
-			y = ow->dot(hVec);
+			y = ow->dot(hVec); // TODO probably a issue with num outputs here...
 			for( double &x : y ) {
 				x = sigmoid(x);
 			}
 			
 			// output error
+			for( int i = 0; i < numOutputs; i++) {
+				t[i] -= y[i];
+				t[i] *= y[i];
+				y[i] = 1 - y[i];
+				deltao[i] = t[i] * y[i];
+			}
 			
 			
 			// hidden error
+			deltah = hVec;
+			for( int i = 0; i < numInputs + 1; i++ ) {
+				deltah[i] *= (1 - deltah[i]);
+			}
+			tempmat = ow->transpose();
+			deltao = tempmat->dot(deltao);
+			for( int i = 0; i < numInputs + 1; i++ ) {
+				deltah[i] *= deltao[i];
+			}
+			
+			// update sums?
+			hw->add(
+			
+			// update matricies
+			sumh->dot(eta);
+			hw->add(sumh);
+			sumo->dot(eta);
+			ow->add(sumo);
 			
 		} // rows
 				
@@ -171,7 +204,7 @@ int main() {
 	
 		
 	// TODO randomize order rows are processed for each attempt
-	for( int t = 0; t < attempts; t++ ) {
+	for( int attempt = 0; attempt < attempts; attempt++ ) {
 		// could use a range-based for using getRow...somehow
 		for( int r = 0; r < rows; r++ ) { //row in training set
 			testVec = toutput->getRow(r);
