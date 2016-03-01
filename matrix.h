@@ -23,19 +23,24 @@ class Matrix {
 	Matrix *		dot( Matrix * mat )			const;
 	vector<double>	dot( vector<double> vec ) 	const;
 	
-	Matrix *		add( double scalar )		const;
-	Matrix *		add( Matrix * mat )			const;
+	Matrix *		add( double scalar )	const;
+	Matrix *		add( Matrix * mat )		const;
 	
-	Matrix * 		transpose()					const;
-	Matrix * 		inverse()					const;
+	// Operate on self without modifying self
+	Matrix * 		transpose()	const;
+	Matrix * 		inverse()	const;
+	Matrix *		normalize() const; // the old normalize function from HW1/HW2
+	Matrix *		normalize( double min, double max )	const;
 	
-	void 			normalize();
-	
+	// Cool
+	void			map( const void * func ); 		// func = function to map to every element in matrix
+	void			mapToRow( int row, const void * func );
+	void			mapToCol( int col, const void * func );
 	
 	// Boring
-	double 			getValue(int row, int col) 	const;
-	vector<double> 	getRow( int row ) 			const;
-	vector<double> 	getCol( int col ) 			const;
+	double 			getValue( int row, int col ) 	const;
+	vector<double> 	getRow( int row ) 				const;
+	vector<double> 	getCol( int col ) 				const;
 	
 	void 		setValue( int row, int col, double value );
 	void 		setRow( vector<double> x, int row );
@@ -45,7 +50,7 @@ class Matrix {
 	int 		rows() const;
 	int 		cols() const;
 	
-	void 		printAll() const;
+	void 		printAll() 			const;
 	void 		printRow( int row ) const;
 	void 		printCol( int col ) const;
 	

@@ -108,7 +108,8 @@ vector<double> Matrix::dot( vector<double> vec ) const {
 		}
 	}
 	else {
-		cerr << "Vector size of " << vec.size() << "did not match number of columns " << numCols << " in matrix" << endl;
+		cerr << "Vector size of " << vec.size() << "did not match number of columns " 
+			<< numCols << " in matrix" << endl;
 	}
 	return result;	
 }
@@ -158,28 +159,48 @@ Matrix * Matrix::transpose() const {
 
 Matrix * Matrix::inverse() const {
 	Matrix * result = new Matrix(numRows, numCols);
-	
 	// TODO
-	
+	return result;
 }
 
-void Matrix::normalize() {
+Matrix * Matrix::normalize() const {
+	Matrix * result = new Matrix(numRows, numCols);
 	double norm = 0.0;
-	// TODO
 	for( int r = 0; r < numRows; r++ ) {
 		for( int c = 0; c < numCols; c++ ) {
 			norm += pow(data[r][c], 2);
 		}
-		
+
 		norm = sqrt(norm);
 		
 		for( int c = 0; c < numCols; c++ ) {
-			data[r][c] /= norm;
+			result->setValue(r, c, data[r][c] / norm);
 		}
-		norm = 0.0;
+				norm = 0.0;
 	}
+	return result;	
 }
 
+
+Matrix * Matrix::normalize( double min, double max ) const {
+	Matrix * result = new Matrix(numRows, numCols);
+	// TODO
+	return result;
+}
+
+void Matrix::map( const void * func ) {
+	// TODO
+}
+
+void Matrix::mapToRow( int row, const void * func ) {
+	// TODO
+}
+
+void Matrix::mapToCol( int col, const void * func ) {
+	// TODO
+}
+
+// ****** BORING STUFF ******* //
 
 double Matrix::getValue( int row, int col ) const {
 	if( row >= numRows || col >= numCols ) {
