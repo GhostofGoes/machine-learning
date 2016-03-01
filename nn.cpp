@@ -3,6 +3,7 @@
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
 // Description:	Assignment 3 main program logic
+// Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>
 #include <iomanip>
@@ -41,10 +42,9 @@ int main() {
 	double min = 1;
 	
 	
-	
 	//		Training Data Input 	//
 	cin >> numInputs;
-	//cin >> num_hidden_nodes;
+	cin >> num_hidden_nodes;
 	cin >> rows;
 	cin >> cols;
 	numOutputs = cols - numInputs;
@@ -115,13 +115,11 @@ int main() {
 	}
 	
 	
-	
-	
 	// 						//
 	// 		* Training * 	//
 
-	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
-	Matrix * ow = new Matrix(numInputs + 1, numOutputs, 2); // +1 for the extra bias between hidden and output layers
+	Matrix * hw = new Matrix(num_hidden_nodes, numOutputs, 2);
+	Matrix * ow = new Matrix(num_hidden_nodes + 1, numOutputs, 2); // +1 for the extra bias between hidden and output layers
 	Matrix * tempmat;
 	Matrix * deltah; // error in hidden layer
 	Matrix * deltao; // error in output layer

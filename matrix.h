@@ -3,6 +3,7 @@
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
 // Description:	Matrix class declarations
+// Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <vector>
 using namespace std;

@@ -3,6 +3,7 @@
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
 // Description:	Matrix class definition
+// Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>
 #include <vector>
@@ -204,6 +205,7 @@ Matrix * Matrix::sub( Matrix * mat ) const {
 	
 	return result;	
 }
+
 
 Matrix * Matrix::transpose() const {
 	Matrix * result = new Matrix(numRows, numCols);
