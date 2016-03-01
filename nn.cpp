@@ -141,10 +141,7 @@ int main() {
 	Matrix * y; // output layer output
 	Matrix * hVec;	
 	Matrix * inVec;
-	Matrix * v;
 	Matrix * t;
-	Matrix * sumh;
-	Matrix * sumo;
 	
 	
 	// re-implementation
@@ -195,6 +192,13 @@ int main() {
 			tempmat = tempmat->dot(eta);
 			hw = hw->add(tempmat);
 			
+			delete deltao;
+			delete deltah;
+			delete a;
+			delete y;
+			delete hVec;
+			delete inVec;
+			delete t;
 		} // rows
 				
 						
@@ -205,42 +209,38 @@ int main() {
 	//		 	Testing			//
 	tResult = -66.6;
 	fResult = -42.0;
-	double * tempResults = new double[numOutputs];
-	double * finalResults = new double[numOutputs];	
+	//double * tempResults = new double[numOutputs];
+	//double * finalResults = new double[numOutputs];	
 	
 	cout <<  "BEGIN TESTING" << endl;
 	
 	for( int r = 0; r < rows; r++ ) { // Each row in testing set
+		inVec = testInput->getRow(r);
+		
 		for (int i = 0; i < (numInputs - 1); i++) {
 			cout << fixed <<  setprecision(2) <<  testInput->getValue(r, i) <<  " ";
 		}
+
+		// hidden layer
+		a = inVec->dot(hw);
+		a->sigmoid();
+		hVec = new Matrix(a);
+		hVec->data[0].push_back(bias);
+		hVec->numCols++;
 		
-		for( int out = 0; out < numOutputs; out++ ) { // Each output
-			
-			tResult = 0.0; // clear tempResults before we add
-			
-			for( int i = 0; i < numInputs; i++ ) { // Each input
-				//tResult += test->getValue(r, i) * w->getValue(i, out);
-			}
-			
-			tResult = sigmoid(tResult);
-			fResult = activate(tResult);
-			tempResults[out] = tResult;
-			finalResults[out] = fResult;
-			
-		} // per-output loop
+		// output layer
+		y = hVec->dot(hw);
+		y->sigmoid();		
 
 		for( int i = 0; i < numOutputs; i++ ) {
-			cout <<  fixed <<  setprecision(0) <<  finalResults[i] << " ";
+			cout <<  fixed <<  setprecision(0) <<  y->getValue(r, i) << " ";
 		}
 		cout <<  endl; // end the row's output
 	} // row in set loop	
 	
 	
 	
-	//		Cleanup		//
-	delete tempResults;
-	delete finalResults;
+	//		Final Cleanup		//
 	delete hw;
 	delete ow;
 	delete tinput;
