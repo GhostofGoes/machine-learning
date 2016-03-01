@@ -9,19 +9,15 @@ using namespace std;
 
 class Matrix {
 	public:
-	//Matrix() { numRows = numCols = 0; }
 	Matrix( int rows, int cols );
 	Matrix( int rows, int cols, double range );
 	Matrix( Matrix * initMat );
-	~Matrix() {}
-	
-	// old shitty methods (hey look they're gone)
-	
+	~Matrix() {} // token destructor
+		
 	// new not-shitty methods
-	// TODO make sure i'm freeing matricies that are returned in the caller
+	// TODO make sure i'm freeing matricies that are returned in the caller (lmao leaking everywhere)
 	Matrix *		dot( double scalar ) 		const;
 	Matrix *		dot( Matrix * mat )			const;
-	vector<double>	dot( vector<double> vec ) 	const;
 	
 	Matrix *		add( double scalar )	const;
 	Matrix *		add( Matrix * mat )		const;

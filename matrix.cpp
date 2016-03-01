@@ -72,50 +72,51 @@ Matrix * Matrix::dot( double scalar ) const {
 }
 
 Matrix * Matrix::dot( Matrix * mat ) const {
-	int newRows = numRows;
-	int newCols = mat->cols();
-	Matrix * result = new Matrix(newRows, newCols);
-	int temp = 0;
+	Matrix * result;
 	
-	if( numCols != mat->rows() ) {
-		cerr << "#cols != #rows for multiplication!" << endl;
+	if( mat->rows() == 1 && numCols == 1) {
+		result = new Matrix( numRows, mat->cols() );
+		for( int r = 0; r < numRows; r++ ) {
+			for( int c = 0; c < mat->cols(); c++ ) {
+				result->setValue(r, c, mat->getValue(0, c) * data[r][0]);
+			}
+		}
 		return result;
 	}
-
-	for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
-		for( int c = 0; c < newCols; c++ ) {
-			temp = 0;
-			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
-				temp += ( data[r][j] * mat->getValue(j, c) );
-			}
-			result->setValue(r, c, temp);
-		}
-	}
-	return result;	
-}
-
-/*
-vector<double> Matrix::dot( vector<double> vec ) const {
-	vector<double> result;
 	
-	if( vec.size() == numCols ) {
+	else if( mat->cols() == 1 && numRows == 1 ) {
+		result = new Matrix( mat->rows(), numCols );
+		for( int r = 0; r < mat->rows(); r++ ) {
+			for( int c = 0; c < numCols; c++ ) {
+				result->setValue(r, c, mat->getValue(r, 0) * data[0][c]);
+			}
+		}
+		return result;
+	}
+	
+	else {
+		int newRows = numRows;
+		int newCols = mat->cols();
+		result = new Matrix(newRows, newCols);
 		int temp = 0;
 		
-		for( int i = 0; i < numRows; i++ ) {
-			for( int j = 0; j < numCols; j++ ) {
-				temp += (data[i][j] * vec[j]);
-			}
-			result[i] = temp;
-			temp = 0;
+		if( numCols != mat->rows() ) {
+			cerr << "#cols != #rows for multiplication!" << endl;
+			return result;
 		}
+		for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
+			for( int c = 0; c < newCols; c++ ) {
+				temp = 0;
+				for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
+					temp += ( data[r][j] * mat->getValue(j, c) );
+			}
+			result->setValue(r, c, temp);
+			}
+		}
+		return result;			
 	}
-	else {
-		cerr << "Vector size of " << vec.size() << "did not match number of columns " 
-			<< numCols << " in matrix" << endl;
-	}
-	return result;	
+
 }
-*/
 
 Matrix * Matrix::add( double scalar ) const {
 	Matrix * result = new Matrix(numRows, numCols);
@@ -128,23 +129,49 @@ Matrix * Matrix::add( double scalar ) const {
 }
 
 Matrix * Matrix::add( Matrix * mat ) const {
-	Matrix * result = new Matrix(numRows, numCols);
+	Matrix * result;
 	
-	if( mat->rows() != numRows ) {
-		cerr << "Rows don't match for matrix addition" << endl;
-		return result;
-	} else if ( mat->cols() != numCols ) {
-		cerr << "Cols don't match for matrix addition" << endl;
-		return result;
-	}
-	
-	for( int r = 0; r < numRows; r++ ) {
-		for( int c = 0; c < numCols; c++ ) {
-			result->setValue(r, c, data[r][c] + mat->getValue(r, c) );
+	if( mat->rows() == 1 && numCols == 1) {
+		result = new Matrix( numRows, mat->cols() );
+		for( int r = 0; r < numRows; r++ ) {
+			for( int c = 0; c < mat->cols(); c++ ) {
+				result->setValue(r, c, mat->getValue(0, c) + data[r][0]);
+			}
 		}
+		return result;
 	}
-	
-	return result;
+		
+	else if( mat->cols() == 1 && numRows == 1 ) {
+		result = new Matrix( mat->rows(), numCols );
+		for( int r = 0; r < mat->rows(); r++ ) {
+			for( int c = 0; c < numCols; c++ ) {
+				result->setValue(r, c, mat->getValue(r, 0) + data[0][c]);
+			}
+		}
+		return result;
+	}
+				
+	else {
+		int newRows = numRows;
+		int newCols = mat->cols();
+		result = new Matrix(newRows, newCols);
+		int temp = 0;
+		
+		if( numCols != mat->rows() ) {
+			cerr << "#cols != #rows for addition!" << endl;
+			return result;
+		}
+				for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
+					for( int c = 0; c < newCols; c++ ) {
+						temp = 0;
+						for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
+							temp += ( data[r][j] + mat->getValue(j, c) );
+					}
+								result->setValue(r, c, temp);
+	}
+}
+		return result;			
+		}
 }
 
 

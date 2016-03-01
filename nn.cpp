@@ -12,7 +12,7 @@
 #include "matrix.h"
 
 #define DEBUG 0
-#define DEBUGINPUT 0
+#define DEBUGINPUT 1
 #define DEBUG_RESULTS 0
 
 
@@ -24,6 +24,7 @@ double sigmoid( double input );     // Sigmoid function
 int main() {
 	
 	// Initialization
+	// weird init values are paranoia for error catching
 	int numInputs = 0;
 	int numOutputs = 0;
 	int rows = 0;
@@ -43,7 +44,7 @@ int main() {
 	
 	//		Training Data Input 	//
 	cin >> numInputs;
-	cin >> num_hidden_nodes;
+	//cin >> num_hidden_nodes;
 	cin >> rows;
 	cin >> cols;
 	numOutputs = cols - numInputs;
@@ -122,19 +123,6 @@ int main() {
 	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
 	Matrix * ow = new Matrix(numInputs + 1, numOutputs, 2); // +1 for the extra bias between hidden and output layers
 	Matrix * tempmat;
-	double tResult = -66.6; //init values are paranoia for error catching
-	double aResult = -55.0;
-	double fResult = -42.0;
-	temp = -99;
-	
-	if(DEBUG) {
-		cout << "\nInitialized Hidden Weight matrix..." << endl;
-		hw->printAll();
-	}
-
-	// Normalize our input (THIS COULD BE IMPROVED) TODO
-	tinput->normalize(min, max);
-	
 	Matrix * deltah; // error in hidden layer
 	Matrix * deltao; // error in output layer
 	Matrix * a; // hidden layer output
@@ -142,12 +130,19 @@ int main() {
 	Matrix * hVec;	
 	Matrix * inVec;
 	Matrix * t;
+	temp = -99;
 	
+	if(DEBUG) {
+		cout << "\nInitialized Hidden Weight matrix..." << endl;
+		hw->printAll();
+	}
+
+	// Normalize our input
+	tinput->normalize(min, max);
 	
 	// re-implementation
 	for( int attempt = 0; attempt < attempts; attempt++ ) {
-		
-		
+		// TODO randomize order rows are done each attempt?
 		for( int r = 0; r < rows; r++ ) {
 			inVec = tinput->getRow(r);
 			t = toutput->getRow(r);
@@ -207,14 +202,10 @@ int main() {
  
 	//							//
 	//		 	Testing			//
-	tResult = -66.6;
-	fResult = -42.0;
-	//double * tempResults = new double[numOutputs];
-	//double * finalResults = new double[numOutputs];	
-	
+
 	cout <<  "BEGIN TESTING" << endl;
 	
-	for( int r = 0; r < rows; r++ ) { // Each row in testing set
+	for( int r = 0; r < testRows; r++ ) { // Each row in testing set
 		inVec = testInput->getRow(r);
 		
 		for (int i = 0; i < (numInputs - 1); i++) {
@@ -233,7 +224,7 @@ int main() {
 		y->sigmoid();		
 
 		for( int i = 0; i < numOutputs; i++ ) {
-			cout <<  fixed <<  setprecision(0) <<  y->getValue(r, i) << " ";
+			cout <<  fixed <<  setprecision(0) <<  y->getValue(0, i) << " ";
 		}
 		cout <<  endl; // end the row's output
 	} // row in set loop	
