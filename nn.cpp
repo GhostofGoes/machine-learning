@@ -86,7 +86,7 @@ int main() {
 	vector<double> inVec;
 	vector<double> hVec (numInputs - 1);
 	vector<double> outVec (numOutputs);
-	vector<double> testOut;
+	vector<double> testVec;
 	vector<double> oError (numOutputs);
 	vector<double> hError (numOutputs);
 	double tResult = -66.6; //init values are paranoia for error catching
@@ -102,7 +102,7 @@ int main() {
 	for( int t = 0; t < attempts; t++ ) {
 		// could use a range-based for using getRow...somehow
 		for( int r = 0; r < rows; r++ ) { //row in training set
-			testOut = toutput->getRow(r);
+			testVec = toutput->getRow(r);
 			inVec = tinput->getRow(r);
 			
 			// Hidden Layer (s)
@@ -156,7 +156,7 @@ int main() {
 			// Update hidden layer weight matrix
 			for( int out = 0; out < numOutputs; out++ ) {
 				for( int i = 0; i < numInputs; i++ ) {
-					tResult = hw->getValue - (eta * hError[out] * inVec[out]);
+					tResult = hw->getValue(i,  out) - (eta * hError[out] * inVec[out]);
 					hw->setValue(i, out, tResult);
 				}
 			}	
@@ -208,7 +208,7 @@ int main() {
 			tResult = 0.0; // clear tempResults before we add
 			
 			for( int i = 0; i < numInputs; i++ ) { // Each input
-				tResult += test->getValue(r, i) * w->getValue(i, out);
+				//tResult += test->getValue(r, i) * w->getValue(i, out);
 			}
 			
 			tResult = sigmoid(tResult);

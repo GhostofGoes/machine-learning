@@ -23,7 +23,6 @@ Matrix::Matrix( int rows, int cols ) {
 	data = temp;
 }
 
-
 Matrix::Matrix( int rows, int cols, double range ) {
 	numRows = rows;
 	numCols = cols;
@@ -59,8 +58,6 @@ Matrix::Matrix( Matrix * init ) {
 	}
 }
 
-
-// Scalar multiplication
 void Matrix::s_mult( double scalar ) {
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
@@ -69,8 +66,6 @@ void Matrix::s_mult( double scalar ) {
 	}
 }
   
-// Matrix multiplication
-// Possible memory leak? 
 Matrix * Matrix::m_mult( Matrix * mat ) {
 	
 	// Check that matricies are able to be multiplied
@@ -92,11 +87,9 @@ Matrix * Matrix::m_mult( Matrix * mat ) {
 			result->setValue(r, c, temp);
 		}
 	}
-	
 	return result;
 }
 
-// Vector Multiplication
 vector<double> Matrix::v_mult( vector<double> vec ) const {
 	vector<double> tempvec;
 	
@@ -114,11 +107,9 @@ vector<double> Matrix::v_mult( vector<double> vec ) const {
 	else {
 		cerr << "Vector size did not match number of columns in matrix" << endl;
 	}
-	
 	return tempvec;
 }
 
-// Scalar addition
 void Matrix::add( double scalar ) {
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
@@ -127,16 +118,12 @@ void Matrix::add( double scalar ) {
 	}	
 }
 
-// Matrix addition
 void Matrix::add( Matrix * mat ) {
-	
-	// Check matricies are the same size
 	if( numRows != mat->rows() || numCols != mat->cols() ) {
 		cerr << "Matrix sizes don't match for addition!" << endl;
 		return;
 	}	
 	
-	// Add the matricies
 	for( int i = 0; i < numRows; i++ ) {
 		for( int j = 0; j < numCols; j++ ) {
 			data[i][j] += mat->getValue(i, j);
@@ -145,29 +132,85 @@ void Matrix::add( Matrix * mat ) {
 	
 }
 
-Matrix * Matrix::transpose() {
-	int newRows = numCols;
-	int newCols = numRows;
+
+
+
+Matrix * Matrix::dot( double scalar ) const {
+	Matrix * result = new Matrix(numRows, numCols);
+	
+	for( int i = 0; i < numRows; i++ ) {
+		for( int c = 0; c < numCols; c++ ) {
+			result->setValue(i, c, data[i][c] * scalar);
+		}
+	}
+	return result;
+}
+
+Matrix * Matrix::dot( Matrix * mat ) const {
+	int newRows = numRows;
+	int newCols = mat->cols();
 	Matrix * result = new Matrix(newRows, newCols);
+	int temp = 0;
+	
+	if( numCols != mat->rows() ) {
+		cerr << "#cols != #rows for multiplication!" << endl;
+		return result;
+	}
+
+	for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
+		for( int c = 0; c < newCols; c++ ) {
+			temp = 0;
+			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
+				temp += ( data[r][j] * mat->getValue(j, c) );
+			}
+			result->setValue(r, c, temp);
+		}
+	}
+	return result;	
+}
+
+vector<double> Matrix::dot( vector<double> vec ) const {
+	vector<double> result;
+	
+	if( vec.size() == numCols ) {
+		int temp = 0;
+		
+		for( int i = 0; i < numRows; i++ ) {
+			for( int j = 0; j < numCols; j++ ) {
+				temp += (data[i][j] * vec[j]);
+			}
+			result[i] = temp;
+			temp = 0;
+		}
+	}
+	else {
+		cerr << "Vector size of " << vec.size() << "did not match number of columns " << numCols << " in matrix" << endl;
+	}
+	return result;	
+}
+
+Matrix * Matrix::transpose() const {
+	Matrix * result = new Matrix(numRows, numCols);
 	
 	for( int r = 0; r < numRows; r++ ) {
 		for( int c = 0; c < numCols; c++ ) {
 			result->setValue(c, r, data[r][c]);
 		}
 	}
+		
+	return result;
 }
 
-// TODO
-Matrix * Matrix::inverse() {
-	int newRows = 0;
-	int newCols = 0;	
-	Matrix * result = new Matrix(newRows, newCols);
+Matrix * Matrix::inverse() const {
+	Matrix * result = new Matrix(numRows, numCols);
+	
+	// TODO
 	
 }
 
 void Matrix::normalize() {
 	double norm = 0.0;
-	
+	// TODO
 	for( int r = 0; r < numRows; r++ ) {
 		for( int c = 0; c < numCols; c++ ) {
 			norm += pow(data[r][c], 2);
