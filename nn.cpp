@@ -28,6 +28,8 @@ int main() {
 	int numOutputs = 0;
 	int rows = 0;
 	int cols = 0;
+	int testRows = 0;
+	int testCols = 0;
 	double temp = -99;
 	double bias = -1; // -1 is what the book uses.
 	double eta = 0.025; // 0.25 is what the book uses. open to tweaking.
@@ -35,7 +37,9 @@ int main() {
 	int num_hidden_layers = 1; // is this a thing
 	int num_hidden_nodes = 0;
 	
-	/* Training Data Input */
+	
+	
+	//		Training Data Input 	//
 	cin >> numInputs;
 	cin >> num_hidden_nodes;
 	cin >> rows;
@@ -75,12 +79,37 @@ int main() {
 		cout << "\nTraining Outputs..." << endl;
 		toutput->printAll();
 	}	
+	
+	
+	//		Test Data Input 	//
+	cin >> testRows;
+	cin >> testCols;
+	Matrix * testInput = new Matrix(testRows, testCols + 1);
 
-	// Normalize our input (THIS COULD BE IMPROVED)
-	tinput->normalize();
+	// Fill the matrix
+	for(int r = 0; r < testRows; r++) {
+		for(int c = 0; c < testCols; c++) {
+			cin >> temp;
+			testInput->setValue(r, c, temp);
+		}
+	}	
+
+	// Append the bias
+	for( int r = 0; r < testRows; r++ ) {
+		testInput->setValue(r, testCols, bias);
+	}
+	testCols++;
+
+	if(DEBUGINPUT) {
+		cout << "\nTest Inputs matrix" << endl;
+		testInput->printAll();
+	}
 	
-	// * Training * //
 	
+	
+	
+	// 						//
+	// 		* Training * 	//
 	Matrix * hw = new Matrix(numInputs, numOutputs, 2);
 	Matrix * ow = new Matrix(numInputs, numOutputs, 2);
 	vector<double> inVec;
@@ -97,7 +126,28 @@ int main() {
 		cout << "\nInitialized Hidden Weight matrix..." << endl;
 		hw->printAll();
 	}
+
+	// Normalize our input (THIS COULD BE IMPROVED) TODO
+	tinput->normalize();
 	
+	
+	// re-implementation
+	for( int t = 0; t < attempts; t++ ) {
+		
+		
+		for( int r = 0; r < rows; r++ ) {
+			
+			
+			
+			
+		} // rows
+				
+						
+	} // attempts	
+	
+	
+	
+		
 	// TODO randomize order rows are processed for each attempt
 	for( int t = 0; t < attempts; t++ ) {
 		// could use a range-based for using getRow...somehow
@@ -163,44 +213,23 @@ int main() {
 		} // row in set loop
 	} // attempts loop
 
- 
-	// ** Test Data Input ** TODO move this before training
 	
-	temp = -99; // paranoia
-	cin >> rows;
-	cin >> cols;
-	Matrix* test = new Matrix(rows, cols + 1);
+
+	
+ 
+ 
+	//							//
+	//		 	Testing			//
 	tResult = -66.6;
 	fResult = -42.0;
 	double * tempResults = new double[numOutputs];
-	double * finalResults = new double[numOutputs];
-	int prevMaxInd = 0;
-	double max = 0.0;
-	
-	// Fill the matrix
-	for(int r = 0; r < rows; r++) {
-		for(int c = 0; c < cols; c++) {
-			cin >> temp;
-			test->setValue(r, c, temp);
-		}
-	}	
-	
-	// Append the bias
-	for( int r = 0; r < rows; r++ ) {
-		test->setValue(r, cols, bias);
-	}
-	cols++;
-	
-	if(DEBUGINPUT) {
-		cout << "\nTest Inputs matrix" << endl;
-		test->printAll();
-	}
+	double * finalResults = new double[numOutputs];	
 	
 	cout <<  "BEGIN TESTING" << endl;
 	
-	for( int r = 0; r < rows; r++ ) { // Each row in training set
+	for( int r = 0; r < rows; r++ ) { // Each row in testing set
 		for (int i = 0; i < (numInputs - 1); i++) {
-			cout << fixed <<  setprecision(2) <<  test->getValue(r, i) <<  " ";
+			cout << fixed <<  setprecision(2) <<  testInput->getValue(r, i) <<  " ";
 		}
 		
 		for( int out = 0; out < numOutputs; out++ ) { // Each output
@@ -222,19 +251,18 @@ int main() {
 			cout <<  fixed <<  setprecision(0) <<  finalResults[i] << " ";
 		}
 		cout <<  endl; // end the row's output
-		max = 0.0;
-		prevMaxInd = 0;
 	} // row in set loop	
 	
 	
-	// Cleanup
+	
+	//		Cleanup		//
 	delete tempResults;
 	delete finalResults;
 	delete hw;
 	delete ow;
 	delete tinput;
 	delete toutput;
-	delete test;
+	delete testInput;
 	return(0);
 }
 
