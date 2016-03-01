@@ -123,9 +123,8 @@ int main() {
 			
 			// Output Layer
 			for( int out = 0; out < numOutputs; out++ ) {
-				tResult = 0.0; // Reset tempResults
+				tResult = 0.0;
 				
-				// Multiply inputs by weight matrix
 				for( int i = 0; i < numInputs; i++ ) { 
 					tResult += hVec[i] * ow->getValue(i, out);
 				}

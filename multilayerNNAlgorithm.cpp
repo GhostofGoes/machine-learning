@@ -19,9 +19,9 @@
             for (Matrix *i = inIter.rowBegin(); inIter.rowNotEnd(); inIter.rowNext(), outIter.rowNext()) {
                 // layer 1
                 a = i->dot(V);        // sig(i . v)
-                a.map(sigp);
-                hidden.insert(a, 0, 0);                // insert into matrix with bias 
-                hidden.constantCol(numhidden, -1.0);   // put in bias
+                a.map(sigp); /// obviously sigmoid phunction
+                hidden.insert(a, 0, 0);                // insert into matrix with bias ///(not really with bias)
+                hidden.constantCol(numhidden, -1.0);   // put in bias ///(now really with bias)
 
                 // layer 2
                 y = hidden.dot(W);    // sig(hidden . w)  uses a and bias node
