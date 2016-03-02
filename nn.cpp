@@ -13,7 +13,7 @@
 #include "matrix.h"
 
 #define DEBUG 0
-#define DEBUGINPUT 1
+#define DEBUGINPUT 0
 #define DEBUG_RESULTS 0
 
 
@@ -107,7 +107,7 @@ int main() {
 	for( int r = 0; r < testRows; r++ ) {
 		testInput->setValue(r, testCols, bias);
 	}
-	testCols++;
+	testCols;
 
 	if(DEBUGINPUT) {
 		cout << "\nTest Inputs matrix" << endl;
@@ -160,16 +160,16 @@ int main() {
 			t->subSelf(y);
 			t = t->dot(y);
 			y->scalarPreSub(1.0);
-			deltao = t->dot(y);
+			deltao = t->mult(y);
 				
 			// hidden error
 			deltah = hVec;
 			hVec->scalarPreSub(1.0);
-			deltah->dot(hVec);
+			deltah->mult(hVec);
 			hVec->scalarPreSub(1.0);
 			tempmat = deltao->dot(ow);
 			tempmat = tempmat->transpose();
-			deltah = deltah->dot(tempmat);
+			deltah = deltah->mult(tempmat);
 			
 			// update matricies
 			tempmat = hVec->transpose();
@@ -222,7 +222,7 @@ int main() {
 		y->sigmoid();		
 
 		for( int i = 0; i < numOutputs; i++ ) {
-			cout <<  fixed <<  setprecision(0) <<  y->getValue(0, i) << " ";
+			cout <<  fixed <<  setprecision(2) <<  y->getValue(0, i) << " ";
 		}
 		cout <<  endl; // end the row's output
 	} // row in set loop	

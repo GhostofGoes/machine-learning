@@ -76,10 +76,10 @@ Matrix * Matrix::dot( Matrix * mat ) const {
 	Matrix * result = new Matrix( numRows, mat->cols() );
 	int temp = 0;
 	
-	for( int r = 0; r < newRows; r++ ) { // every row in first matrix == row in result
+	for( int r = 0; r < numRows; r++ ) { // every row in first matrix == row in result
 		for( int c = 0; c < mat->cols(); c++ ) {
 			temp = 0;
-			for( int j = 0; j < newCols; j++ ) { // every column in first matrix == value in result
+			for( int j = 0; j < numCols; j++ ) { // every column in first matrix == value in result
 				temp += ( data[r][j] * mat->getValue(j, c) );
 			}
 			result->setValue(r, c, temp);
@@ -92,7 +92,7 @@ Matrix * Matrix::mult( Matrix * mat ) {
 	Matrix * result = new Matrix( numRows, numCols );
 	for( int r = 0; r < numRows; r++ ) {
 		for( int c = 0; c < numCols; c++ ) {
-			result->setValue(r, c, data[r][j] + mat->getValue(r, c);
+			result->setValue(r, c, data[r][c] * mat->getValue(r, c));
 		}
 	}
 	return result;
@@ -240,7 +240,7 @@ void Matrix::mapToCol( int col, const void * func ) {
 
 double Matrix::getValue( int row, int col ) const {
 	if( row >= numRows || col >= numCols ) {
-		cerr << "getValue out of bounds!" << endl;
+		//cerr << "getValue out of bounds!" << endl;
 		return -50.0;
 	}
 	else {
@@ -279,7 +279,8 @@ Matrix * Matrix::getCol( int col ) {
 
 void Matrix::setValue( int row, int col, double value ) {
 	if( row >= numRows || col >= numCols )
-		cerr << "setValue out of bounds!" << endl;
+		//cerr << "setValue out of bounds!" << endl;
+		;
 	else
 		data[row][col] = value;
 }
