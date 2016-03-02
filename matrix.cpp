@@ -118,14 +118,6 @@ Matrix * Matrix::add( Matrix * mat ) const {
 	return result;
 }
 
-void Matrix::addSelf( Matrix * mat ) {
-	for( int r = 0; r < numRows; r++ ) {
-		for( int c = 0; c < numCols; c++ ) {
-			data[r][c] += mat->getValue(r, c);
-		}
-	}	
-}
-
 Matrix * Matrix::sub( double scalar ) const {
 	Matrix * result = new Matrix(numRows, numCols);
 	for( int r = 0; r < numRows; r++ ) {
@@ -156,16 +148,8 @@ Matrix * Matrix::sub( Matrix * mat ) const {
 	return result;	
 }
 
-void Matrix::subSelf( Matrix * mat ) {
-	for( int r = 0; r < numRows; r++ ) {
-		for( int c = 0; c < numCols; c++ ) {
-			data[r][c] -= mat->getValue(r, c);
-		}
-	}	
-}
-
 Matrix * Matrix::transpose() const {
-	Matrix * result = new Matrix(numRows, numCols);
+	Matrix * result = new Matrix(numCols, numRows);
 	
 	for( int r = 0; r < numRows; r++ ) {
 		for( int c = 0; c < numCols; c++ ) {

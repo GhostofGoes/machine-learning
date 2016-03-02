@@ -16,10 +16,8 @@
 #define DEBUGINPUT 0
 #define DEBUG_RESULTS 0
 
-
 using namespace std;
 
-double activate( double input ); 	// Activation Function
 double sigmoid( double input );     // Sigmoid function
 
 int main() {
@@ -33,7 +31,7 @@ int main() {
 	int testRows = 0;
 	int testCols = 0;
 	double temp = -99;
-	double bias = -1; // -1 is what the book uses.
+	double bias = -1.0; // -1 is what the book uses.
 	double eta = 0.025; // 0.25 is what the book uses. open to tweaking.
 	int attempts = 1; // if debugging, SET THIS TO A SMALL NUMBER!
 	//int num_hidden_layers = 1; // is this a thing
@@ -144,24 +142,58 @@ int main() {
 		for( int r = 0; r < rows; r++ ) {
 			inVec = tinput->getRow(r);
 			t = toutput->getRow(r);
-			
+		
+			if(DEBUG) {
+			cout << "inVec" << endl;
+			inVec->printAll();
+			cout << endl;
+			}
 			// hidden layer
 			a = inVec->dot(hw);
 			a->sigmoid();
+			
+			if(DEBUG) {
+			cout << "a" << endl;
+			a->printAll();
+			cout << endl;
+			}
 			hVec = new Matrix(a);
 			hVec->data[0].push_back(bias);
 			hVec->numCols++;
 			
+			if(DEBUG) {
+			cout << "hVec" << endl;
+			hVec->printAll();
+			cout << endl;
+			}
 			// output layer
 			y = hVec->dot(hw);
 			y->sigmoid();
 			
+			if(DEBUG) {
+			cout << "y" << endl;
+			y->printAll();
+			cout << endl;
+			}
 			// output error
-			t->subSelf(y);
+			t = t->sub(y);
 			t = t->dot(y);
+			
+			if(DEBUG) {
+			cout << "y" << endl;
+			t->printAll();
+			cout << endl;
+			}
+			
 			y->scalarPreSub(1.0);
 			deltao = t->mult(y);
-				
+			
+			if(DEBUG) {
+			cout << "deltao" << endl;
+			deltao->printAll();
+			cout << endl;	
+			}
+			
 			// hidden error
 			deltah = hVec;
 			hVec->scalarPreSub(1.0);
@@ -171,11 +203,17 @@ int main() {
 			tempmat = tempmat->transpose();
 			deltah = deltah->mult(tempmat);
 			
+			if(DEBUG) {
+			cout << "deltah" << endl;
+			deltah->printAll();
+			cout << endl;
+			}
+			
 			// update matricies
-			tempmat = hVec->transpose();
-			tempmat = tempmat->dot(deltao);
-			tempmat = tempmat->dot(eta);
-			ow->addSelf(tempmat);
+			hVec = hVec->transpose();
+			hVec = hVec->dot(deltao);
+			hVec = hVec->dot(eta);
+			ow = ow->add(tempmat);
 			
 			deltah->data[0].pop_back();
 			deltah->numCols--;
@@ -183,7 +221,7 @@ int main() {
 			tempmat = inVec->transpose();
 			tempmat = inVec->dot(deltah);
 			tempmat = tempmat->dot(eta);
-			hw->addSelf(tempmat);
+			hw = hw->add(tempmat);
 			
 			delete deltao;
 			delete deltah;
@@ -202,6 +240,7 @@ int main() {
 	//		 	Testing			//
 
 	cout <<  "BEGIN TESTING" << endl;
+	testInput->normalize(min, max);
 	
 	for( int r = 0; r < testRows; r++ ) { // Each row in testing set
 		inVec = testInput->getRow(r);
@@ -236,13 +275,6 @@ int main() {
 	delete toutput;
 	delete testInput;
 	return(0);
-}
-
-double activate( double input ) {
-	if( input > 0.0 )
-		return 1.0;
-	else
-		return 0.0;
 }
 
 double sigmoid( double input ) {
