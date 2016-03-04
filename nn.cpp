@@ -239,11 +239,14 @@ int main() {
 	//							//
 	//		 	Testing			//
 
+	Matrix * normTestInput;
+	
 	cout <<  "BEGIN TESTING" << endl;
-	testInput->normalize(min, max);
+	normTestInput = new Matrix(testInput);
+	normTestInput->normalize(min, max);
 	
 	for( int r = 0; r < testRows; r++ ) { // Each row in testing set
-		inVec = testInput->getRow(r);
+		inVec = normTestInput->getRow(r);
 		
 		for (int i = 0; i < testCols; i++) {
 			cout << fixed <<  setprecision(2) <<  testInput->getValue(r, i) <<  " ";
