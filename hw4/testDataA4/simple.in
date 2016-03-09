@@ -1,0 +1,9 @@
+2  
+A   0   1   2
+B   cat dog
+Ans 0   1   2
+0   dog 0  
+1   dog 1  
+1   cat 0  
+2   cat 2  
+2   dog 2  

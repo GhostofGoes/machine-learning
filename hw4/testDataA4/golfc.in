@@ -1,0 +1,20 @@
+4
+Outlook  Sunny Overcast Rain
+Temp     continuous
+Humidity Dry   Humid   
+Wind     Calm  Windy   
+Ans      Play  Noplay  
+Sunny    93 Humid Calm  Noplay
+Sunny    80 Humid Windy Noplay
+Overcast 82 Humid Calm  Play  
+Rain     75 Humid Calm  Play  
+Rain     65 Humid Calm  Play  
+Rain     68 Dry   Windy Noplay
+Overcast 63 Dry   Windy Play  
+Sunny    73 Humid Calm  Noplay
+Sunny    62 Dry   Calm  Play  
+Rain     79 Humid Calm  Play  
+Sunny    71 Dry   Windy Play  
+Overcast 73 Humid Windy Play  
+Overcast 99 Humid Calm  Play  
+Rain     77 Humid Windy Noplay
