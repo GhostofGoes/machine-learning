@@ -1,27 +1,18 @@
 #!/usr/bin/env python3
 
 import fileinput
-
-
-
+import math
 
 def calc_entropy(p):
     if p != 0:
-        return -p * p.log2(p) # book had "np.log2(p)", maybe a typo?
+        return -p * math.log2(p)
     else:
         return 0
-
-
-
-
-
-
 
 input_debugging = True
 features = []
 answers = []
 
-# Input the file
 for line in fileinput.input():
     linenum = fileinput.lineno()
     if linenum == 1:
@@ -33,7 +24,6 @@ for line in fileinput.input():
     else:
         answers.append(line.split())
 
-
 if input_debugging:
     print("num_features: " + str(num_features))
     for feature in features:
@@ -42,5 +32,4 @@ if input_debugging:
     print("possible_answers: " + str(possible_answers))
     for answer in answers:
         print(answer)
-
 
