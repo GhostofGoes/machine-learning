@@ -1,0 +1,21 @@
+4
+Outlook  Sunny Overcast Rain
+Temp     Cool  Warm     Hot 
+Humidity Dry   Humid   
+Wind     Calm  Breezy   Windy
+Ans      Play  Noplay  
+Sunny    Hot  Humid Calm  Play
+Sunny    Hot  Humid Windy Play
+Overcast Hot  Humid Calm  Play  
+Rain     Warm Humid Calm  Play  
+Rain     Cool Humid Calm  Play  
+Rain     Cool Dry   Windy Play
+Overcast Cool Dry   Windy Play  
+Sunny    Warm Humid Calm  Play
+Sunny    Cool Dry   Calm  Play  
+Rain     Warm Humid Calm  Play  
+Sunny    Warm Dry   Windy Play  
+Overcast Warm Humid Windy Play  
+Overcast Hot  Humi  Calm  Play  
+Rain     Warm Humid Windy Play
+Rain     Warm Humid Breezy Play
