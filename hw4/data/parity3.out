@@ -1,0 +1,25 @@
+** duplicate information gain **
+** duplicate information gain **
+** duplicate information gain **
+ B=0:
+     C=0:
+         A=0:
+             0
+         A=1:
+             1
+     C=1:
+         A=0:
+             1
+         A=1:
+             0
+ B=1:
+     C=0:
+         A=0:
+             1
+         A=1:
+             0
+     C=1:
+         A=0:
+             0
+         A=1:
+             1

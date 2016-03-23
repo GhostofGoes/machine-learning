@@ -1,0 +1,23 @@
+** duplicate information gain **
+** duplicate information gain **
+ Pat=Full:
+     Price=$:
+         Est=0-10:
+             Yes
+         Est=30-60:
+             Bar=No:
+                 No
+             Bar=Yes:
+                 Yes
+         Est=>60:
+             No
+         Est=10-30:
+             Yes
+     Price=$$:
+         Yes
+     Price=$$$:
+         No
+ Pat=None:
+     No
+ Pat=Some:
+     Yes

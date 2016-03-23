@@ -1,0 +1,8 @@
+** duplicate information gain **
+ A>0.5:
+     1
+ A<=0.5:
+     B>0.5:
+         1
+     B<=0.5:
+         0

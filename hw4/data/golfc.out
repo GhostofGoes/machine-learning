@@ -1,0 +1,13 @@
+** duplicate information gain **
+ Outlook=Sunny:
+     Humidity=Dry:
+         Play
+     Humidity=Humid:
+         Noplay
+ Outlook=Overcast:
+     Play
+ Outlook=Rain:
+     Wind=Windy:
+         Noplay
+     Wind=Calm:
+         Play
