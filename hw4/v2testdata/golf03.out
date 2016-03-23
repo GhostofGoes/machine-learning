@@ -1,0 +1,14 @@
+ Outlook=Sunny:
+     Humidity=Humid:
+         Noplay
+     Humidity=Dry:
+         Play
+ Outlook=Overcast:
+     Play
+ Outlook=Rain:
+     Wind=Breezy:
+         Play
+     Wind=Windy:
+         Noplay
+     Wind=Calm:
+         Play
