@@ -23,7 +23,7 @@ def calc_info_gain(feature, features, examples, example_answers ):
 
     for f in features[feature]:
         for example in examples:
-
+            pass
 
 
     return entropy - gain
