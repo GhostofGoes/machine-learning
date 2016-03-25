@@ -71,25 +71,26 @@ def main():
             labels.append(temp[0])
             features.append(temp[1:])
         elif linenum == num_features + 2:
-            answers = line.split()
+            temp = line.split()
+            answers = temp[1:]
         else:
             temp = line.split()
             examples.append(temp[:-1])
             example_answers.append((temp[-1]))
 
     if input_debugging:
-        print("Input filename: " + fileinput.filename())
-        print("num_features: " + str(num_features))
+        print("Input filename:", fileinput.filename())
+        print("num_features:", num_features)
         for label, feature in zip(labels, features):
             print('{:15}'.format(label + ': '), end="", flush=True)
             print(feature)
 
-        print('{:15}'.format("\nPossible Answers: ") + str(answers))
+        print('\n', answers)
         for example, ans in zip(examples, example_answers):
             print('{:15}'.format(ans + ': '), end="", flush=True)
             print(example)
 
     for i in range(0, len(features)):
-        print("Calc_info_gain of ", i, " : ", calc_info_gain(i, features, examples, example_answers ))
+        print("calc_info_gain of", '{:10}'.format(labels[i]), ":", calc_info_gain(i, features, examples, example_answers ))
 
 main()
