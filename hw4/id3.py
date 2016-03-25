@@ -3,6 +3,8 @@
 import fileinput
 import math
 
+testing = True
+
 
 # From page 251 in teh book
 def calc_entropy(p):
@@ -13,20 +15,31 @@ def calc_entropy(p):
 
 
 # Based on code from page 253 in the book
-def calc_info_gain(feature, features, examples, example_answers ):
-    gain = 0
-    entropy = 0
+# Formula: Gain(S, F) = Entropy(S) - sum( len(Sf)/len(S) * Entropy(Sf)
+def calc_info_gain(feature, values, examples, example_answers ):
+    entropy1 = 0 # Entropy(S)
+    entropy2 = 0 # sum( len(Sf) / len(S) * Entropy(Sf )
 
+    # Calculate Entropy for the set of all answers
     for ans in example_answers:
-        entropy += calc_entropy(float(example_answers.count(ans))/len(example_answers))
+        entropy1 += calc_entropy(float(example_answers.count(ans))/len(example_answers))
 
+    # for each possible value of a given feature
+    #    sum( prob. of that value appearing * entropy of each subset that has that value )
+    for val in values[feature]:
+        ents = 0
+        temp = []
 
-    for f in features[feature]:
-        for example in examples:
-            pass
+        for exp, ans in zip(examples, example_answers):
+            if val in exp:  # data sets are small enough i can get away with this shit
+                temp.append(ans)
 
+        for exp in list(set(temp)):  # Calc entropy of subset by calc. for each possible answer
+            ents += calc_entropy(float(temp.count(exp) / len(temp)))
 
-    return entropy - gain
+        entropy2 += (len(temp) / len(examples)) * ents  # Add entropy of subset to sum
+
+    return entropy1 - entropy2 # Calculate the information gain
 
 
 def build_tree():
@@ -48,7 +61,6 @@ def main():
     answers = []
     examples = []
     example_answers = []
-
 
     for line in fileinput.input():
         linenum = fileinput.lineno()
@@ -77,5 +89,7 @@ def main():
             print('{:15}'.format(ans + ': '), end="", flush=True)
             print(example)
 
+    for i in range(0, len(features)):
+        print("Calc_info_gain of ", i, " : ", calc_info_gain(i, features, examples, example_answers ))
 
 main()
