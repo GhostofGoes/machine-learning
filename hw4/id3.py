@@ -45,8 +45,6 @@ def calc_info_gain(feature, values, examples, example_answers ):
 # Based on algorithm on pages 255-256 in the book
 def make_tree(data, data_answers, features, labels):
     default = 0
-    index = 0
-
 
     if not data: # No more data
         return None
@@ -66,6 +64,7 @@ def make_tree(data, data_answers, features, labels):
 
         # Find possible feature values TODO continuous
         for feature in features[best_feature]:
+            index = 0
             new_data = []
             new_answers = []
             new_features = []
@@ -94,7 +93,6 @@ def make_tree(data, data_answers, features, labels):
             subtree = make_tree(new_data, new_answers, new_features, new_labels)
             tree[labels[best_feature]][feature] = subtree
         return tree
-
 
 
 def print_tree(tree):
@@ -142,7 +140,7 @@ def id3():
 
     if testing:
         for i in range(0, len(features)):
-          print("calc_info_gain of", '{:10}'.format(labels[i]), ":", calc_info_gain(i, features, examples, example_answers ))
+            print("calc_info_gain of", '{:10}'.format(labels[i]), ":", calc_info_gain(i, features, examples, example_answers ))
 
     tree = make_tree(examples, example_answers, features, labels)
     print_tree(tree)
