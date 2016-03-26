@@ -18,87 +18,191 @@ def calc_entropy(p):
 # Based on code from pages 253 - 254 in the book
 # Formula: Gain(S, F) = Entropy(S) - sum( len(Sf)/len(S) * Entropy(Sf)
 def calc_info_gain(feature, values, examples, example_answers ):
-    entropy1 = 0  # Entropy(S)
-    entropy2 = 0  # sum( len(Sf) / len(S) * Entropy(Sf )
+    entropy_ans = 0 # Entropy(S)
+    entropy2 = 0    # sum( len(Sf) / len(S) * Entropy(Sf )
+    ents = 0        # Used for calculating Entropy(Sf)
+    temp = []       # Temporary array (wow!)
 
     # Calculate Entropy for the set of all answers
     for ans in list(set(example_answers)):
-        entropy1 += calc_entropy(float(example_answers.count(ans) / len(example_answers)))
+        entropy_ans += calc_entropy(float(example_answers.count(ans) / len(example_answers)))
 
     # for each possible value of a given feature
     #    sum( prob. of that value appearing * entropy of each subset that has that value )
     for val in range(len(values[feature])):
-        ents = 0
-        temp = []
-
         for e in range(len(examples)):
             if examples[e][feature] == values[feature][val]:
                 temp.append(example_answers[e])
-        # So I was doing this like an idiot...
-        # for exp, ans in zip(examples, example_answers):
-        #    if val in exp:  # data sets are small enough i can get away with this shit
-        #        temp.append(ans)
 
         for exp in list(set(temp)):  # Calc entropy of subset by calc. for each possible answer
             ents += calc_entropy(float(temp.count(exp) / len(temp)))
         entropy2 += (len(temp) / len(examples)) * ents  # Add entropy of subset to sum
 
-    return entropy1 - entropy2 # Calculate the information gain
+    return entropy_ans - entropy2 # Calculate the information gain
+
+
+# Calculates the information gain for continuous values
+def calc_continuous_info_gain(feature, features, data, data_answers):
+    entropy_ans = 0 # Entropy(S)
+    entropy_less = 0
+    entropy_more = 0
+    ents_less = 0
+    ents_more = 0
+    values = []
+    temp_less = []
+    temp_more = []
+    index = 0
+    gains = []
+
+    # Calculate entropy for all the answers (same as in the normal info gain function)
+    for ans in list(set(data_answers)):
+        entropy_ans += calc_entropy(float(data_answers.count(ans) / len(data_answers)))
+
+    # Get all the continuous values
+    for val in range(len(data)):
+        values.append(data[val][feature])
+
+    for val in values:
+        for i in values:
+            if i <= val:
+                temp_less.append(i)
+                temp_less.append(data_answers[index])
+            elif i > val:
+                temp_more.append(i)
+                temp_more.append(data_answers[index])
+            index += 1
+
+        for l in temp_less:
+            ents_less += calc_entropy(float(temp_less.count(l) / len(temp_less)))
+        gains.append((len(temp_less) / len(data)) * ents_less)
+
+        for m in temp_more:
+            ents_more += calc_entropy(float(temp_more.count(m) / len(temp_more)))
+        gains[-1] += (len(temp_more) / len(data)) * ents_more
+
+    for gain in gains:
+        gain = entropy_ans - gain
+
+    if testing:
+        print("Gain:", max(gains))
+
+    return max(gains), values[gains.index(max(gains))] # Gain, Value we selected
 
 
 # Based on algorithm on pages 255-256 in the book
 def make_tree(data, data_answers, features, labels):
 
-    if not data: # No more data
+    if not data:        # No more data
         return None
-    elif not features: # No more features, empty branch
+    elif not features:  # No more features, empty branch
         return max(set(data_answers), key=data_answers.count) # http://stackoverflow.com/a/1518632/2214380
     elif len(set(data_answers)) == 1: # One class remaining
         return set(data_answers).pop()
     else:
         gains = []
+        cont_val = 0
 
         # Choose best feature based on information gain
         for feature in range(len(features)):
-            # TODO Need to handle continuous
-            gains.append(calc_info_gain(feature, features, data, data_answers))
+            if feature == "continuous":
+                (temp, cont_val) = calc_continuous_info_gain(feature, features, data, data_answers)
+                gains.append(temp)
+            else:
+                gains.append(calc_info_gain(feature, features, data, data_answers))
         best_feature = gains.index(max(gains))
-
+        print(cont_val)
         tree = {labels[best_feature]: {}}
 
-        # Find possible feature values TODO continuous
+        # Find possible feature values
         for feature in features[best_feature]:
             index = 0
             new_data = []
+            less_new_data = []
+            more_new_data = []
             new_answers = []
+            less_new_answers = []
+            more_new_answers = []
             new_features = []
             new_labels = []
 
-            for datapoint in data:
-                if datapoint[best_feature] == feature:
-                    if best_feature == 0:
-                        datapoint = datapoint[1:]
-                        new_labels = labels[1:]
-                        new_features = features[1:]
-                    elif best_feature == len(features):
-                        datapoint = datapoint[:-1]
-                        new_labels = labels[:-1]
-                        new_features = features[:-1]
-                    else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
-                        new_datapoint = datapoint[:best_feature]
-                        new_datapoint.extend(datapoint[best_feature+1:])
-                        datapoint = new_datapoint
-                        new_labels = labels[:best_feature]
-                        new_labels.extend(labels[best_feature+1:])
-                        new_features = features[:best_feature]
-                        new_features.extend(features[best_feature+1:])
+            if feature == "continuous":
+                for datapoint in data:
+                    if datapoint[best_feature] <= cont_val:
+                        if datapoint[best_feature] == feature:
+                            if best_feature == 0:
+                                datapoint = datapoint[1:]
+                                new_labels = labels[1:]
+                                new_features = features[1:]
+                            elif best_feature == len(features):
+                                datapoint = datapoint[:-1]
+                                new_labels = labels[:-1]
+                                new_features = features[:-1]
+                            else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
+                                new_datapoint = datapoint[:best_feature]
+                                new_datapoint.extend(datapoint[best_feature + 1:])
+                                datapoint = new_datapoint
+                                new_labels = labels[:best_feature]
+                                new_labels.extend(labels[best_feature + 1:])
+                                new_features = features[:best_feature]
+                                new_features.extend(features[best_feature + 1:])
 
-                    new_data.append(datapoint)
-                    new_answers.append(data_answers[index])
-                index += 1
+                            less_new_data.append(datapoint)
+                            less_new_answers.append(data_answers[index])
+                        index += 1
 
-            subtree = make_tree(new_data, new_answers, new_features, new_labels)
-            tree[labels[best_feature]][feature] = subtree
+                    elif datapoint[best_feature] > cont_val:
+                        if datapoint[best_feature] == feature:
+                            if best_feature == 0:
+                                datapoint = datapoint[1:]
+                                new_labels = labels[1:]
+                                new_features = features[1:]
+                            elif best_feature == len(features):
+                                datapoint = datapoint[:-1]
+                                new_labels = labels[:-1]
+                                new_features = features[:-1]
+                            else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
+                                new_datapoint = datapoint[:best_feature]
+                                new_datapoint.extend(datapoint[best_feature + 1:])
+                                datapoint = new_datapoint
+                                new_labels = labels[:best_feature]
+                                new_labels.extend(labels[best_feature + 1:])
+                                new_features = features[:best_feature]
+                                new_features.extend(features[best_feature + 1:])
+
+                            more_new_data.append(datapoint)
+                            more_new_answers.append(data_answers[index])
+                        index += 1
+                less_subtree = make_tree(less_new_data, less_new_answers, new_features, new_labels)
+                more_subtree = make_tree(more_new_data, more_new_answers, new_features, new_labels)
+                tree[labels[best_feature]]["less "] = less_subtree
+                tree[labels[best_feature]]["more "] = more_subtree
+
+            # Not continuous
+            else:
+                for datapoint in data:
+                    if datapoint[best_feature] == feature:
+                        if best_feature == 0:
+                            datapoint = datapoint[1:]
+                            new_labels = labels[1:]
+                            new_features = features[1:]
+                        elif best_feature == len(features):
+                            datapoint = datapoint[:-1]
+                            new_labels = labels[:-1]
+                            new_features = features[:-1]
+                        else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
+                            new_datapoint = datapoint[:best_feature]
+                            new_datapoint.extend(datapoint[best_feature+1:])
+                            datapoint = new_datapoint
+                            new_labels = labels[:best_feature]
+                            new_labels.extend(labels[best_feature+1:])
+                            new_features = features[:best_feature]
+                            new_features.extend(features[best_feature+1:])
+
+                        new_data.append(datapoint)
+                        new_answers.append(data_answers[index])
+                    index += 1
+                subtree = make_tree(new_data, new_answers, new_features, new_labels)
+                tree[labels[best_feature]][feature] = subtree
         return tree
 
 
@@ -110,8 +214,15 @@ def print_tree(tree, depth=0):
     else:
         for key in tree:
             for val in tree[key]:
-                print("    " * depth, key, "=", val, ":")
-                print_tree(tree[key][val], depth + 1)
+                if "less" in val:
+                    print("    " * depth, key, "=", val, ":")
+                    print_tree(tree[key][val], depth + 1)
+                elif "more" in val:
+                    print("    " * depth, key, "=", val, ":")
+                    print_tree(tree[key][val], depth + 1)
+                else:
+                    print("    " * depth, key, "=", val, ":")
+                    print_tree(tree[key][val], depth + 1)
 
 
 def id3():
