@@ -44,14 +44,11 @@ def calc_info_gain(feature, values, examples, example_answers ):
 # Calculates the information gain for continuous values
 def calc_continuous_info_gain(feature, features, data, data_answers):
     entropy_ans = 0 # Entropy(S)
-    entropy_less = 0
-    entropy_more = 0
     ents_less = 0
     ents_more = 0
     values = []
     temp_less = []
     temp_more = []
-    index = 0
     gains = []
 
     # Calculate entropy for all the answers (same as in the normal info gain function)
@@ -63,6 +60,7 @@ def calc_continuous_info_gain(feature, features, data, data_answers):
         values.append(data[val][feature])
 
     for val in values:
+        index = 0
         for i in values:
             if i <= val:
                 temp_less.append(i)
@@ -104,7 +102,7 @@ def make_tree(data, data_answers, features, labels):
 
         # Choose best feature based on information gain
         for feature in range(len(features)):
-            if feature == "continuous":
+            if features[feature][0] == "continuous":
                 (temp, cont_val) = calc_continuous_info_gain(feature, features, data, data_answers)
                 gains.append(temp)
             else:
@@ -125,7 +123,7 @@ def make_tree(data, data_answers, features, labels):
             new_features = []
             new_labels = []
 
-            if feature == "continuous":
+            if features == "continuous":
                 for datapoint in data:
                     if datapoint[best_feature] <= cont_val:
                         if datapoint[best_feature] == feature:
