@@ -105,7 +105,6 @@ def make_tree(data, data_answers, features, labels):
             else:
                 gains.append(calc_info_gain(feature, features, data, data_answers))
         best_feature = gains.index(max(gains))
-        print(cont_val)
         tree = {labels[best_feature]: {}}
 
         # Find possible feature values
@@ -123,50 +122,44 @@ def make_tree(data, data_answers, features, labels):
             if features == "continuous":
                 for datapoint in data:
                     if datapoint[best_feature] <= cont_val:
-                        if datapoint[best_feature] == feature:
-                            if best_feature == 0:
-                                datapoint = datapoint[1:]
-                                new_labels = labels[1:]
-                                new_features = features[1:]
-                            elif best_feature == len(features):
-                                datapoint = datapoint[:-1]
-                                new_labels = labels[:-1]
-                                new_features = features[:-1]
-                            else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
-                                new_datapoint = datapoint[:best_feature]
-                                new_datapoint.extend(datapoint[best_feature + 1:])
-                                datapoint = new_datapoint
-                                new_labels = labels[:best_feature]
-                                new_labels.extend(labels[best_feature + 1:])
-                                new_features = features[:best_feature]
-                                new_features.extend(features[best_feature + 1:])
-
-                            less_new_data.append(datapoint)
-                            less_new_answers.append(data_answers[index])
-                        index += 1
-
+                        if best_feature == 0:
+                            datapoint = datapoint[1:]
+                            new_labels = labels[1:]
+                            new_features = features[1:]
+                        elif best_feature == len(features):
+                            datapoint = datapoint[:-1]
+                            new_labels = labels[:-1]
+                            new_features = features[:-1]
+                        else:
+                            new_datapoint = datapoint[:best_feature]
+                            new_datapoint.extend(datapoint[best_feature + 1:])
+                            datapoint = new_datapoint
+                            new_labels = labels[:best_feature]
+                            new_labels.extend(labels[best_feature + 1:])
+                            new_features = features[:best_feature]
+                            new_features.extend(features[best_feature + 1:])
+                        less_new_data.append(datapoint)
+                        less_new_answers.append(data_answers[index])
                     elif datapoint[best_feature] > cont_val:
-                        if datapoint[best_feature] == feature:
-                            if best_feature == 0:
-                                datapoint = datapoint[1:]
-                                new_labels = labels[1:]
-                                new_features = features[1:]
-                            elif best_feature == len(features):
-                                datapoint = datapoint[:-1]
-                                new_labels = labels[:-1]
-                                new_features = features[:-1]
-                            else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
-                                new_datapoint = datapoint[:best_feature]
-                                new_datapoint.extend(datapoint[best_feature + 1:])
-                                datapoint = new_datapoint
-                                new_labels = labels[:best_feature]
-                                new_labels.extend(labels[best_feature + 1:])
-                                new_features = features[:best_feature]
-                                new_features.extend(features[best_feature + 1:])
-
-                            more_new_data.append(datapoint)
-                            more_new_answers.append(data_answers[index])
-                        index += 1
+                        if best_feature == 0:
+                            datapoint = datapoint[1:]
+                            new_labels = labels[1:]
+                            new_features = features[1:]
+                        elif best_feature == len(features):
+                            datapoint = datapoint[:-1]
+                            new_labels = labels[:-1]
+                            new_features = features[:-1]
+                        else:
+                            new_datapoint = datapoint[:best_feature]
+                            new_datapoint.extend(datapoint[best_feature + 1:])
+                            datapoint = new_datapoint
+                            new_labels = labels[:best_feature]
+                            new_labels.extend(labels[best_feature + 1:])
+                            new_features = features[:best_feature]
+                            new_features.extend(features[best_feature + 1:])
+                        more_new_data.append(datapoint)
+                        more_new_answers.append(data_answers[index])
+                    index += 1
                 less_subtree = make_tree(less_new_data, less_new_answers, new_features, new_labels)
                 more_subtree = make_tree(more_new_data, more_new_answers, new_features, new_labels)
                 tree[labels[best_feature]]["less "] = less_subtree
