@@ -2,9 +2,9 @@
 
 import fileinput
 import math
-import operator
 
-testing = True
+testing = False
+input_debugging = False
 
 
 # From page 251 in teh book
@@ -18,26 +18,29 @@ def calc_entropy(p):
 # Based on code from pages 253 - 254 in the book
 # Formula: Gain(S, F) = Entropy(S) - sum( len(Sf)/len(S) * Entropy(Sf)
 def calc_info_gain(feature, values, examples, example_answers ):
-    entropy1 = 0 # Entropy(S)
-    entropy2 = 0 # sum( len(Sf) / len(S) * Entropy(Sf )
+    entropy1 = 0  # Entropy(S)
+    entropy2 = 0  # sum( len(Sf) / len(S) * Entropy(Sf )
 
     # Calculate Entropy for the set of all answers
-    for ans in example_answers:
-        entropy1 += calc_entropy(float(example_answers.count(ans))/len(example_answers))
+    for ans in list(set(example_answers)):
+        entropy1 += calc_entropy(float(example_answers.count(ans) / len(example_answers)))
 
     # for each possible value of a given feature
     #    sum( prob. of that value appearing * entropy of each subset that has that value )
-    for val in values[feature]:
+    for val in range(len(values[feature])):
         ents = 0
         temp = []
 
-        for exp, ans in zip(examples, example_answers):
-            if val in exp:  # data sets are small enough i can get away with this shit
-                temp.append(ans)
+        for e in range(len(examples)):
+            if examples[e][feature] == values[feature][val]:
+                temp.append(example_answers[e])
+        # So I was doing this like an idiot...
+        # for exp, ans in zip(examples, example_answers):
+        #    if val in exp:  # data sets are small enough i can get away with this shit
+        #        temp.append(ans)
 
         for exp in list(set(temp)):  # Calc entropy of subset by calc. for each possible answer
             ents += calc_entropy(float(temp.count(exp) / len(temp)))
-
         entropy2 += (len(temp) / len(examples)) * ents  # Add entropy of subset to sum
 
     return entropy1 - entropy2 # Calculate the information gain
@@ -45,7 +48,6 @@ def calc_info_gain(feature, values, examples, example_answers ):
 
 # Based on algorithm on pages 255-256 in the book
 def make_tree(data, data_answers, features, labels):
-    default = 0
 
     if not data: # No more data
         return None
@@ -82,7 +84,7 @@ def make_tree(data, data_answers, features, labels):
                         datapoint = datapoint[:-1]
                         new_labels = labels[:-1]
                         new_features = features[:-1]
-                    else:  # Error in book here. datapoint is being overwritten and then being used again. Thanks Keith!
+                    else:  # Error in books code: datapoint is being overwritten before reuse. Thanks Keith!
                         new_datapoint = datapoint[:best_feature]
                         new_datapoint.extend(datapoint[best_feature+1:])
                         datapoint = new_datapoint
@@ -113,7 +115,6 @@ def print_tree(tree, depth=0):
 
 
 def id3():
-    input_debugging = True
     labels = []
     features = []
     answers = []
