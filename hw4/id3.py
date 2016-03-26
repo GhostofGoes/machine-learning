@@ -213,14 +213,12 @@ def print_tree(tree, depth=0):
         for key in tree:
             for val in tree[key]:
                 if "less" in val:
-                    print("    " * depth, key, "=", val, ":")
-                    print_tree(tree[key][val], depth + 1)
+                    print("    " * depth, key, "<=", val.split()[-1], ":")
                 elif "more" in val:
-                    print("    " * depth, key, "=", val, ":")
-                    print_tree(tree[key][val], depth + 1)
+                    print("    " * depth, key, ">", val.split()[-1], ":")
                 else:
                     print("    " * depth, key, "=", val, ":")
-                    print_tree(tree[key][val], depth + 1)
+                print_tree(tree[key][val], depth + 1)
 
 
 def id3():
