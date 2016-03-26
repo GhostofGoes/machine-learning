@@ -70,16 +70,13 @@ def calc_continuous_info_gain(feature, features, data, data_answers):
                 temp_more.append(data_answers[index])
             index += 1
 
-        for l in temp_less:
+        for l in list(set(temp_less)):
             ents_less += calc_entropy(float(temp_less.count(l) / len(temp_less)))
         gains.append((len(temp_less) / len(data)) * ents_less)
 
-        for m in temp_more:
+        for m in list(set(temp_more)):
             ents_more += calc_entropy(float(temp_more.count(m) / len(temp_more)))
         gains[-1] += (len(temp_more) / len(data)) * ents_more
-
-    for gain in gains:
-        gain = entropy_ans - gain
 
     if testing:
         print("Gain:", max(gains))
