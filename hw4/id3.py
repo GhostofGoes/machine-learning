@@ -5,6 +5,7 @@ import math
 
 testing = True
 
+
 # From page 251 in teh book
 def calc_entropy(p):
     if p != 0:
@@ -40,12 +41,11 @@ def calc_info_gain(feature, values, examples, example_answers ):
 
     return entropy1 - entropy2 # Calculate the information gain
 
+
 # Based on algorithm on pages 255-256 in the book
 def make_tree(data, data_answers, features, labels):
     default = 0
-    new_data = []
-    new_answers = []
-    new_features = []
+    index = 0
 
 
     if not data: # No more data
@@ -59,14 +59,41 @@ def make_tree(data, data_answers, features, labels):
 
         # Choose best feature based on information gain
         for feature in range(len(features)):
-            # Need to handle continuous
+            # TODO Need to handle continuous
             gains.append(calc_info_gain(feature, features, data, data_answers))
         best_feature = gains.index(max(gains)) # since max won't necessarily give us the first instance
         tree = {labels[best_feature]:{}}
 
-        # Find possible feature values
+        # Find possible feature values TODO continuous
+        for feature in features[best_feature]:
+            new_data = []
+            new_answers = []
+            new_features = []
+            new_labels = []
 
+            for datapoint in data:
+                if datapoint[best_feature] == feature:
+                    if best_feature == 0:
+                        datapoint = datapoint[1:]
+                        new_labels = labels[1:]
+                        new_features = features[1:]
+                    elif best_feature == len(features):
+                        datapoint = datapoint[:-1]
+                        new_labels = labels[:-1]
+                        new_features = features[:-1]
+                    else: # Error in book here. datapoint is being overwritten and then being used again. Thanks Keith!
+                        new_datapoint = datapoint[:best_feature]
+                        new_datapoint.extend(datapoint[best_feature+1:])
+                        datapoint = new_datapoint
+                        new_labels = labels[:best_feature]
+                        new_labels.extend(labels[best_feature+1:])
+                    new_data.append(datapoint)
+                    new_answers.append(data_answers[index])
+                index += 1
 
+            subtree = make_tree(new_data, new_answers, new_features, new_labels)
+            tree[labels[best_feature]][feature] = subtree
+        return tree
 
 
 
@@ -77,7 +104,6 @@ def print_tree(tree):
         print(tree)
 
 
-# Globals make naming a pain
 def id3():
     input_debugging = True
     labels = []
@@ -120,6 +146,7 @@ def id3():
 
     tree = make_tree(examples, example_answers, features, labels)
     print_tree(tree)
+
 
 # Execute Order 66
 id3()
