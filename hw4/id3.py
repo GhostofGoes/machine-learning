@@ -60,8 +60,9 @@ def make_tree(data, data_answers, features, labels):
         for feature in range(len(features)):
             # TODO Need to handle continuous
             gains.append(calc_info_gain(feature, features, data, data_answers))
-        best_feature = gains.index(max(gains)) # since max won't necessarily give us the first instance
-        tree = {labels[best_feature]:{}}
+        best_feature = gains.index(max(gains))
+
+        tree = {labels[best_feature]: {}}
 
         # Find possible feature values TODO continuous
         for feature in features[best_feature]:
@@ -81,12 +82,15 @@ def make_tree(data, data_answers, features, labels):
                         datapoint = datapoint[:-1]
                         new_labels = labels[:-1]
                         new_features = features[:-1]
-                    else: # Error in book here. datapoint is being overwritten and then being used again. Thanks Keith!
+                    else:  # Error in book here. datapoint is being overwritten and then being used again. Thanks Keith!
                         new_datapoint = datapoint[:best_feature]
                         new_datapoint.extend(datapoint[best_feature+1:])
                         datapoint = new_datapoint
                         new_labels = labels[:best_feature]
                         new_labels.extend(labels[best_feature+1:])
+                        new_features = features[:best_feature]
+                        new_features.extend(features[best_feature+1:])
+
                     new_data.append(datapoint)
                     new_answers.append(data_answers[index])
                 index += 1
