@@ -2,6 +2,7 @@
 
 import fileinput
 import math
+import operator
 
 testing = True
 
@@ -95,11 +96,16 @@ def make_tree(data, data_answers, features, labels):
         return tree
 
 
-def print_tree(tree):
+def print_tree(tree, depth=0):
     if tree is None:
         pass
+    elif type(tree) == str or type(tree) == int:
+        print("    " * depth, tree)
     else:
-        print(tree)
+        for key in tree:
+            for val in tree[key]:
+                print("    " * depth, key, "=", val, ":")
+                print_tree(tree[key][val], depth + 1)
 
 
 def id3():
