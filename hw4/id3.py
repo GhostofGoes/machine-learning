@@ -52,8 +52,8 @@ def calc_continuous_info_gain(feature, features, data, data_answers):
         entropy_ans += calc_entropy(float(data_answers.count(ans)) / len(data_answers))
 
     # Get all the continuous values
-    for val in range(len(data)):
-        values.append(data[val][feature])
+    for i in range(len(data)):
+        values.append(float(data[i][feature]))
 
     for val in values:
         ents_less = 0
@@ -79,7 +79,10 @@ def calc_continuous_info_gain(feature, features, data, data_answers):
             ents_more += calc_entropy(float(temp_more.count(m)) / len(temp_more))
         gains[-1] += (float(len(temp_more)) / len(data)) * ents_more
 
-    return max(gains), values[gains.index(max(gains))]  # Gain, Value we selected
+    if testing:
+        print("values[stuff]:", values[gains.index(max(gains)) - 1])
+
+    return max(gains), values[gains.index(max(gains)) - 1]  # Gain, Value we selected
 
 
 # Based on algorithm on pages 255-256 in the book
@@ -87,12 +90,12 @@ def make_tree(data, data_answers, features, labels):
     if not data:        # No more data
         return None
     elif not features:  # No more features, empty branch
-        return max(set(data_answers), key=data_answers.count) # http://stackoverflow.com/a/1518632/2214380
-    elif len(set(data_answers)) == 1: # One class remaining
+        return max(set(data_answers), key=data_answers.count)  # http://stackoverflow.com/a/1518632/2214380
+    elif len(set(data_answers)) == 1:  # One class remaining
         return set(data_answers).pop()
     else:
         gains = []
-        cont_val = 0 # TODO: WHY THE FUCK IS THIS ALWAYS ONE MIGHT AS WELL MAKE IT A CONSTANT LMAO
+        cont_val = 0.0
 
         # Choose best feature based on information gain
         for feature in range(len(features)):
@@ -100,8 +103,8 @@ def make_tree(data, data_answers, features, labels):
                 temp, cont_val = calc_continuous_info_gain(feature, features, data, data_answers)
                 if testing:
                     print("cont_val:", cont_val)
-                    print("temp:", temp)
                 gains.append(temp)
+                break
             else:
                 gains.append(calc_info_gain(feature, features, data, data_answers))
         best_feature = gains.index(max(gains))
@@ -123,7 +126,7 @@ def make_tree(data, data_answers, features, labels):
 
             if feature == "continuous":
                 for datapoint in data:
-                    if datapoint[best_feature] <= cont_val:
+                    if float(datapoint[best_feature]) <= cont_val:
                         if best_feature == 0:
                             datapoint = datapoint[1:]
                             new_labels = labels[1:]
@@ -142,7 +145,7 @@ def make_tree(data, data_answers, features, labels):
                             new_features.extend(features[best_feature + 1:])
                         less_new_data.append(datapoint)
                         less_new_answers.append(data_answers[index])
-                    elif datapoint[best_feature] > cont_val:
+                    elif float(datapoint[best_feature]) > cont_val:
                         if best_feature == 0:
                             datapoint = datapoint[1:]
                             new_labels = labels[1:]
