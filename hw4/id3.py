@@ -205,7 +205,6 @@ def print_tree(tree, depth=0):
                     print("    " * depth, key, ">", val.split()[-1], ":")
                 else:
                     print("    " * depth, key, "=", val, ":")
-                print(val)
                 print_tree(tree[key][val], depth + 1)
 
 
