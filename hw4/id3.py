@@ -3,8 +3,8 @@
 import fileinput
 import math
 
-testing = True
-input_debugging = True
+testing = False
+input_debugging = False
 
 
 # From page 251 in teh book
@@ -14,7 +14,7 @@ def calc_entropy(p):
     else:
         return 0
 
-
+# TODO might need to cast half of division as float
 # Based on code from pages 253 - 254 in the book
 # Formula: Gain(S, F) = Entropy(S) - sum( len(Sf)/len(S) * Entropy(Sf)
 def calc_info_gain(feature, values, examples, example_answers ):
@@ -98,8 +98,6 @@ def make_tree(data, data_answers, features, labels):
         for feature in range(len(features)):
             if "continuous" in features[feature]:
                 temp, cont_val = calc_continuous_info_gain(feature, features, data, data_answers)
-                print("temp:", temp)
-                print("cont_val:", cont_val)
                 gains.append(temp)
             else:
                 gains.append(calc_info_gain(feature, features, data, data_answers))
@@ -118,7 +116,7 @@ def make_tree(data, data_answers, features, labels):
             new_features = []
             new_labels = []
 
-            if features == "continuous":
+            if feature == "continuous":
                 for datapoint in data:
                     if datapoint[best_feature] <= cont_val:
                         if best_feature == 0:
