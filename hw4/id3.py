@@ -14,29 +14,29 @@ def calc_entropy(p):
     else:
         return 0
 
-# TODO might need to cast half of division as float
+
 # Based on code from pages 253 - 254 in the book
 # Formula: Gain(S, F) = Entropy(S) - sum( len(Sf)/len(S) * Entropy(Sf)
-def calc_info_gain(feature, values, examples, example_answers ):
+def calc_info_gain(feature, values, examples, example_answers):
     entropy_ans = 0 # Entropy(S)
     entropy2 = 0    # sum( len(Sf) / len(S) * Entropy(Sf )
-    ents = 0        # Used for calculating Entropy(Sf)
-    temp = []       # Temporary array (wow!)
 
     # Calculate Entropy for the set of all answers
     for ans in list(set(example_answers)):
-        entropy_ans += calc_entropy(float(example_answers.count(ans) / len(example_answers)))
+        entropy_ans += calc_entropy(float(example_answers.count(ans)) / len(example_answers))
 
     # for each possible value of a given feature
     #    sum( prob. of that value appearing * entropy of each subset that has that value )
     for val in range(len(values[feature])):
+        temp = []
+        ents = 0
         for e in range(len(examples)):
             if examples[e][feature] == values[feature][val]:
                 temp.append(example_answers[e])
 
         for exp in list(set(temp)):  # Calc entropy of subset by calc. for each possible answer
-            ents += calc_entropy(float(temp.count(exp) / len(temp)))
-        entropy2 += (len(temp) / len(examples)) * ents  # Add entropy of subset to sum
+            ents += calc_entropy(float(temp.count(exp)) / len(temp))
+        entropy2 += (float(len(temp)) / len(examples)) * ents  # Add entropy of subset to sum
 
     return entropy_ans - entropy2 # Calculate the information gain
 
@@ -44,23 +44,24 @@ def calc_info_gain(feature, values, examples, example_answers ):
 # Calculates the information gain for continuous values
 def calc_continuous_info_gain(feature, features, data, data_answers):
     entropy_ans = 0 # Entropy(S)
-    ents_less = 0
-    ents_more = 0
     values = []
-    temp_less = []
-    temp_more = []
     gains = []
 
     # Calculate entropy for all the answers (same as in the normal info gain function)
     for ans in list(set(data_answers)):
-        entropy_ans += calc_entropy(float(data_answers.count(ans) / len(data_answers)))
+        entropy_ans += calc_entropy(float(data_answers.count(ans)) / len(data_answers))
 
     # Get all the continuous values
     for val in range(len(data)):
         values.append(data[val][feature])
 
     for val in values:
+        ents_less = 0
+        ents_more = 0
+        temp_less = []
+        temp_more = []
         index = 0
+
         for i in values:
             if i <= val:
                 temp_less.append(i)
@@ -71,19 +72,18 @@ def calc_continuous_info_gain(feature, features, data, data_answers):
             index += 1
 
         for l in list(set(temp_less)):
-            ents_less += calc_entropy(float(temp_less.count(l) / len(temp_less)))
-        gains.append((len(temp_less) / len(data)) * ents_less)
+            ents_less += calc_entropy(float(temp_less.count(l)) / len(temp_less))
+        gains.append((float(len(temp_less)) / len(data)) * ents_less)
 
         for m in list(set(temp_more)):
-            ents_more += calc_entropy(float(temp_more.count(m) / len(temp_more)))
-        gains[-1] += (len(temp_more) / len(data)) * ents_more
+            ents_more += calc_entropy(float(temp_more.count(m)) / len(temp_more))
+        gains[-1] += (float(len(temp_more)) / len(data)) * ents_more
 
-    return max(gains), values[gains.index(max(gains))] # Gain, Value we selected
+    return max(gains), values[gains.index(max(gains))]  # Gain, Value we selected
 
 
 # Based on algorithm on pages 255-256 in the book
 def make_tree(data, data_answers, features, labels):
-
     if not data:        # No more data
         return None
     elif not features:  # No more features, empty branch
@@ -92,16 +92,21 @@ def make_tree(data, data_answers, features, labels):
         return set(data_answers).pop()
     else:
         gains = []
-        cont_val = 0
+        cont_val = 0 # TODO: WHY THE FUCK IS THIS ALWAYS ONE MIGHT AS WELL MAKE IT A CONSTANT LMAO
 
         # Choose best feature based on information gain
         for feature in range(len(features)):
             if "continuous" in features[feature]:
                 temp, cont_val = calc_continuous_info_gain(feature, features, data, data_answers)
+                if testing:
+                    print("cont_val:", cont_val)
+                    print("temp:", temp)
                 gains.append(temp)
             else:
                 gains.append(calc_info_gain(feature, features, data, data_answers))
         best_feature = gains.index(max(gains))
+        if testing:
+            print("best_feature:", best_feature)
         tree = {labels[best_feature]: {}}
 
         # Find possible feature values
@@ -182,12 +187,12 @@ def make_tree(data, data_answers, features, labels):
                             new_labels.extend(labels[best_feature+1:])
                             new_features = features[:best_feature]
                             new_features.extend(features[best_feature+1:])
-
                         new_data.append(datapoint)
                         new_answers.append(data_answers[index])
                     index += 1
                 subtree = make_tree(new_data, new_answers, new_features, new_labels)
                 tree[labels[best_feature]][feature] = subtree
+
         return tree
 
 
