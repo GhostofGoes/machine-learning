@@ -3,8 +3,8 @@
 import fileinput
 import math
 
-testing = False
-input_debugging = False
+testing = True
+input_debugging = True
 
 
 # From page 251 in teh book
@@ -78,9 +78,6 @@ def calc_continuous_info_gain(feature, features, data, data_answers):
             ents_more += calc_entropy(float(temp_more.count(m) / len(temp_more)))
         gains[-1] += (len(temp_more) / len(data)) * ents_more
 
-    if testing:
-        print("Gain:", max(gains))
-
     return max(gains), values[gains.index(max(gains))] # Gain, Value we selected
 
 
@@ -99,8 +96,10 @@ def make_tree(data, data_answers, features, labels):
 
         # Choose best feature based on information gain
         for feature in range(len(features)):
-            if features[feature][0] == "continuous":
-                (temp, cont_val) = calc_continuous_info_gain(feature, features, data, data_answers)
+            if "continuous" in features[feature]:
+                temp, cont_val = calc_continuous_info_gain(feature, features, data, data_answers)
+                print("temp:", temp)
+                print("cont_val:", cont_val)
                 gains.append(temp)
             else:
                 gains.append(calc_info_gain(feature, features, data, data_answers))
@@ -162,8 +161,8 @@ def make_tree(data, data_answers, features, labels):
                     index += 1
                 less_subtree = make_tree(less_new_data, less_new_answers, new_features, new_labels)
                 more_subtree = make_tree(more_new_data, more_new_answers, new_features, new_labels)
-                tree[labels[best_feature]]["less "] = less_subtree
-                tree[labels[best_feature]]["more "] = more_subtree
+                tree[labels[best_feature]]["less " + str(cont_val)] = less_subtree
+                tree[labels[best_feature]]["more " + str(cont_val)] = more_subtree
 
             # Not continuous
             else:
@@ -208,6 +207,7 @@ def print_tree(tree, depth=0):
                     print("    " * depth, key, ">", val.split()[-1], ":")
                 else:
                     print("    " * depth, key, "=", val, ":")
+                print(val)
                 print_tree(tree[key][val], depth + 1)
 
 
@@ -245,10 +245,6 @@ def id3():
         for example, ans in zip(examples, example_answers):
             print('{:15}'.format(ans + ': '), end="", flush=True)
             print(example)
-
-    if testing:
-        for i in range(0, len(features)):
-            print("calc_info_gain of", '{:10}'.format(labels[i]), ":", calc_info_gain(i, features, examples, example_answers ))
 
     tree = make_tree(examples, example_answers, features, labels)
     print_tree(tree)
