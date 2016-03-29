@@ -1,4 +1,4 @@
-BIN  = nn
+BIN  = pca
 CC   = g++
 SRCS = $(BIN).cpp matrix.h matrix.cpp
 LIBS = -lm $(BIN).cpp matrix.cpp
