@@ -1,7 +1,7 @@
 BIN  = pca
 CC   = g++
-SRCS = $(BIN).cpp matrix.h matrix.cpp
-LIBS = -lm $(BIN).cpp matrix.cpp
+SRCS = $(BIN).cpp mat.h mat.cpp rand.h rand.cpp
+LIBS = -lm $(BIN).cpp mat.cpp rand.cpp
 CCFLAGS = -g -std=gnu++11
 
 $(BIN): $(SRCS)
