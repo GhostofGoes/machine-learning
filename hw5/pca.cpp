@@ -14,7 +14,7 @@
 #include "mat.h"
 
 #define DEBUG 0
-#define DEBUGINPUT 1
+#define DEBUGINPUT 0
 #define DEBUG_RESULTS 0
 
 using namespace std;
@@ -28,37 +28,9 @@ int main() {
 	double temp = 0;
 	
 	//	Data Input 	//
-	cin >> numRows;
-	cin >> numCols;
-	
-	totalDatapoints = numRows * numCols;
-	
-	if(DEBUGINPUT) 
-	{
-		cout << "#Rows: " << numRows << "\n#Cols: " << numCols << endl;
-	}
-	
 	//	Input data into a matrix
-	//Matrix inputData = new Matrix( numRows, numCols );
-	double tempdata [totalDatapoints];
-	for(int i = 0; i < totalDatapoints; i++)
-	{
-		cin >> temp;
-		tempdata[i] = temp;
-	}
-	
-	Matrix data(numRows, numCols, tempdata, "data");
-	
-	/*
-	for( int r = 0; r < numRows; r++ )
-	{
-		for( int c = 0; c < numCols; c++ )
-		{
-			cin >> temp;
-			//inputData.setValue(r, c, temp);
-		}
-	}
-	*/
+	Matrix data("data");
+	data.read();
 	
 	if(DEBUGINPUT)
 	{
