@@ -30,17 +30,24 @@ int main() {
 	if(DEBUGINPUT) { cout << "numRows: " << numRows << endl; cout << "numCols: " << numCols << endl; }
 	
 	// Correlation Matrix
-	Matrix corr(data.cov());
+	Matrix corr = data.cov();
 	if(DEBUG) { cout << "\nCorrelation Matrix" << endl; corr.print(); }
 
 	// Create eigen vectors and values
 	Matrix eVecs(corr);
-	Matrix eVals(eVecs.eigenSystem());
+	Matrix eVals = eVecs.eigenSystem();
 	if(DEBUG_EIGEN) { cout << "\nEigen Vectors" << endl; eVecs.print(); }
 	if(DEBUG_EIGEN) { cout << "\nEigen Values" << endl; eVals.print(); }
 	
+	// Normalize Eigenvectors
 	eVecs.normalize();
 	if(DEBUG_EIGEN) { cout << "\nNormalized Eigen Vectors" << endl; eVecs.print(); }
+	
+	// Sort eigenvectors by eigenvalue
+	// Some python: sorted(list(zip(eVals, eVecs)))
+	
+	
+	
 	
 	return(0);
 }
