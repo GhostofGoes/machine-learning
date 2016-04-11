@@ -344,7 +344,7 @@ void Matrix::assertRowsEqual(const Matrix &other, std::string msg) const
 void Matrix::assertColsEqual(const Matrix &other, std::string msg) const
 {
     if (maxc!=other.maxc) {
-        printf("ERROR(%s): Column dimensions do not match: self %s: %d X %d other %s: %d X %d\n", msg.c_str(), name.c_str(), maxr, maxc, other.name.c_str(), other.maxr, other.maxc);
+        //printf("ERROR(%s): Column dimensions do not match: self %s: %d X %d other %s: %d X %d\n", msg.c_str(), name.c_str(), maxr, maxc, other.name.c_str(), other.maxr, other.maxc);
         exit(1);
     }
 }
