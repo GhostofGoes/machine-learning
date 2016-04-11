@@ -8,10 +8,9 @@
 #include <iostream>
 #include "mat.h"
 
-#define DEBUG 1
-#define DEBUG_EIGEN 1
-#define DEBUGINPUT 1
-#define DEBUG_RESULTS 1
+#define DEBUG 0
+#define DEBUG_EIGEN 0
+#define DEBUG_INPUT 0
 
 using namespace std;
 
@@ -19,20 +18,12 @@ const int NUM_VECTORS = 10;
 
 int main() {
 	
-	//int numRows = 0;
-	//int numCols = 0;
 	Matrix data("data");
-	
-	// Read in the input dataset
 	data.read();
-	if(DEBUGINPUT) { cout << "**data matrix**" << endl; data.print(); }
+	if(DEBUG_INPUT) { cout << "**data matrix**" << endl; data.print(); }
 	
-	//numRows = data.maxRows();
-	//numCols = data.maxCols();
-	//if(DEBUGINPUT) { cout << "numRows: " << numRows << endl; cout << "numCols: " << numCols << endl; }
+	// Center the data (cov will center for me, I do this for when I need to translate the data later)
 	Matrix centered = data.subRowVector(data.meanVec());
-	cout << "centered" << endl;
-	centered.print();
 	
 	// Correlation Matrix
 	Matrix corr = data.cov();
@@ -45,9 +36,8 @@ int main() {
 	if(DEBUG_EIGEN) { cout << "\nEigen Vectors" << endl; eVecs.print(); }
 
 	
-	// Normalize Eigenvectors
-	//eVecs.normalize();
-	//if(DEBUG_EIGEN) { cout << "\nNormalized Eigen Vectors" << endl; eVecs.print(); }
+	// Normalize Eigenvectors (apparantly not needed)
+	// eVecs.normalize();
 	
 	// Sort eigenvectors by eigenvalue
 	eVals = eVals.transpose(); // leaky boat
@@ -69,38 +59,28 @@ int main() {
 	eVals = eVals.transpose();
 	eVecs.transposeSelf();
 	
-	if(DEBUG_RESULTS) { cout << "\nSorted Eigen Values" << endl; eVals.print(); }
-	if(DEBUG_RESULTS) { cout << "\nSorted Eigen Vectors" << endl; eVecs.print(); }
+	if(DEBUG_EIGEN) { cout << "\nSorted Eigen Values" << endl; eVals.print(); }
+	if(DEBUG_EIGEN) { cout << "\nSorted Eigen Vectors" << endl; eVecs.print(); }
 	
-	Matrix compressed = centered.dotT(eVecs);
+	
+
+	// Trim columns down for his test script
+	eVecs = eVecs.transpose();	
+	if( NUM_VECTORS < eVecs.maxCols() )
+	{
+		eVecs.narrow(NUM_VECTORS);
+		eVals.narrow(NUM_VECTORS);
+	}
+	eVecs = eVecs.transpose();	
+
+	// Compress!
+	eVecs = eVecs.transpose();	
+	Matrix compressed = centered.dot(eVecs);
 	compressed.write();
 	
+	// Recover the compressed data!
 	Matrix recovered = compressed.dot(eVecs);
-	
-	/*
-	SOME BS
-	vector<pair <double, double*> > sorting;
-	double * eigenvals = eVals.getRow(0);
-	
-	for(int i = 0; i < eVecs.maxRows(); i++)
-	{
-		sorting.push_back(make_pair(eigenvals[i], eVecs.getRow(i))); // This probably leaks memory
-	}
-	
-	sort(sorting.begin(), sorting.end());
-	
-	cout << "\nSorted eigenvectors" << endl;
-	for(int i = 0; i < numRows; i++) // Wormulon runs gcc 4.4 since UI CS dept is trapped in the late 90's. No C++ 11
-	{
-		cout << "Eigen Value: " << sorting[i].first << endl;
-		cout << "\tEigen Vector: ";
-		for( int c = 0; c < eVecs.maxCols(); c++ )
-		{
-			cout << " " << sorting[i].second[c];
-		}
-		cout << endl;
-	}*/
-	
+
 	
 	return(0);
 }
