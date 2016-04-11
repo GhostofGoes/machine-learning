@@ -324,7 +324,7 @@ void Matrix::assertSize(int r, int c, std::string msg) const
 void Matrix::assertOtherLhs(const Matrix &other, std::string msg) const
 {
     if (maxc!=other.maxr) {
-        printf("ERROR(%s): Dimensions do not match: self %s: %d X %d other %s: %d X %d\n", msg.c_str(), name.c_str(), maxr, maxc, other.name.c_str(), other.maxr, other.maxc);
+        //printf("ERROR(%s): Dimensions do not match: self %s: %d X %d other %s: %d X %d\n", msg.c_str(), name.c_str(), maxr, maxc, other.name.c_str(), other.maxr, other.maxc);
         exit(1);
     }
 }
