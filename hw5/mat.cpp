@@ -217,6 +217,19 @@ double Matrix::get(int r, int c)
     return m[r][c];
 }
 
+double * Matrix::getRow( int row )
+{
+	if (row < 0 || row >= maxr )
+	{
+		printf("ERROR(getRow): index out of bounds: asking for (%d) but size is %d\n",
+               row, maxr);
+	}
+	double * theRowDawg = new double[maxc];
+	
+	for( int i = 0; i < maxc; i++)
+		theRowDawg[i] = m[row][i];
+	return theRowDawg;
+}
 
 double Matrix::set(int r, int c, double v)
 {
@@ -1394,6 +1407,20 @@ Matrix &Matrix::inverse()
     return *this;
 }
 
+/*
+void Matrix::center()
+{
+	double mean = 0.0;
+	for( int c = 0; c < maxc; c++ )
+	{
+		mean = meanCol(c);
+		for( int r = 0; r < maxr; r++ )
+		{
+			m[r][c] -= mean;
+		}
+	}
+}
+*/
 
 // just print the size and name of the matrix
 void Matrix::printSize(std::string msg)

@@ -76,6 +76,7 @@ public:
     int maxRows() const { return maxr; }
     int maxCols() const { return maxc; }
     double get(int r, int c);
+	double * getRow(int row);
     double set(int r, int c, double v);
     const std::string &myName(const std::string &defaultName) const;
     void narrow(int newc);
@@ -161,6 +162,9 @@ public:
     int *LU();                              // LU decomposition in place
     Matrix &solve(Matrix &B);               // solve Ax = B returns solutions and inverse
     Matrix &inverse();                      // replace with inverse
+	
+	//void center();					// Centers the matrix for PCA
+	// his functions worked fine, I'm chasing ghosts at this point
 
     // eigen systems
     void tridiagonalize(double *&d, double *&e);
