@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 name=$1
 ass=$2
 file=$3
