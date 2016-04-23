@@ -1,4 +1,4 @@
-BIN  = hw6
+BIN  = ql
 CC   = g++
 SRCS = $(BIN).cpp mat.h mat.cpp rand.h rand.cpp
 LIBS = -lm $(BIN).cpp mat.cpp rand.cpp
