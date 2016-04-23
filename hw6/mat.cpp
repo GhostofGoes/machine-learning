@@ -13,6 +13,7 @@
 #include <math.h>
 #include <iostream>
 #include "rand.h"
+#include <random>
 
 #include "mat.h"
 
@@ -196,8 +197,6 @@ Matrix::~Matrix()
     delete [] m;
     defined = false;   // just because
 }
-
-
 
 // WARNING: as written allows direct access to matrix name (not copy)
 const std::string &Matrix::myName(const std::string &defaultName) const
@@ -1224,9 +1223,28 @@ Matrix &Matrix::constantDiagonal(double x)
 }
 
 
+Matrix &Matrix::randInt(int min, int max)
+{	
+	//std::random_device rd;
+	static std::default_random_engine eng;
+	static std::uniform_int_distribution<int> dist(min, max);
+
+	for ( int r = 0; r < maxr; r++ )
+	{
+		for ( int c = 0; c < maxc; c++ )
+		{
+			//m[r][c] = std::rand() % (max - min);
+			m[r][c] = (int)dist(eng);
+		}
+	}
+	
+	defined = true;
+	return *this;
+}
+
 // fill with random doubles in the given range: [min, max)
 Matrix &Matrix::rand(double min, double max)
-{
+{	
     for (int r=0; r<maxr; r++) {
         for (int c=0; c<maxc; c++) {
             m[r][c] = randUnit()*(max-min) + min;
@@ -1242,8 +1260,7 @@ Matrix &Matrix::rand(double min, double max)
 // fill the given column with random doubles in the given range: [min, max)
 // does not set the state of undefined
 Matrix &Matrix::randCol(int c, double min, double max)
-{
-
+{		
     for (int r=0; r<maxr; r++) {
         m[r][c] = randUnit()*(max-min) + min;
     }

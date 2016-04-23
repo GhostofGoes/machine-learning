@@ -2,7 +2,7 @@ BIN  = ql
 CC   = g++
 SRCS = $(BIN).cpp mat.h mat.cpp rand.h rand.cpp
 LIBS = -lm $(BIN).cpp mat.cpp rand.cpp
-CCFLAGS = -g # -std=gnu++11
+CCFLAGS = -g -std=gnu++11
 
 $(BIN): $(SRCS)
 	$(CC) $(CCFLAGS) $(OBJS) $(LIBS) -o $(BIN)

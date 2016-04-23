@@ -49,7 +49,7 @@ class Matrix {
 friend class MatrixRowIter;
 private:
     bool defined;           // does it have rows and cols defined
-    int maxr, maxc;
+    int maxr, maxc; // rows and columns
     double **m;             // the data
     std::string name;       // the name of the matrix or ""
 
@@ -129,6 +129,7 @@ public:
     Matrix &mapIndex(double (*f)(int r, int c, double x)); // apply function to elements + index
 
     // random initialization
+	Matrix &randInt(int min, int max);
     Matrix &randCol(int c, double min, double max);  // random reals in a column
     Matrix &rand(double min, double max);            // random reals in range 
     Matrix &rand(int min, int max);                  // random integers in range
