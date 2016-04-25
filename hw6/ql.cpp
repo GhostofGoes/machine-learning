@@ -6,60 +6,68 @@
 // Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>
+#include <random>
 #include <cmath>
 #include "mat.h"
 
-using namespace std;
-
 #define DEBUG 0
 
-// Reward: +1 at goal, -1 not at goal
-typedef struct { double p, double v } state;
+using namespace std;
 
-int next( double pos, double vel, int action );
-int selectAction();
 
-// bound enforces  and 
-double vel( state s, int action ); 			// vt+1 = bound(vt + 0.001at − 0.0025 cos(3xt))
+
+typedef struct { double p, v; } state;
+
+int maxAction( state s );
+
+double vel( state s, int action ); 				// vt+1 = bound(vt + 0.001at − 0.0025 cos(3xt))
 double pos( double currPos, double newVel ); 	// xt+1 = bound(xt + vt+1)
 double clampX( double x );						// −1.2 ≤ xt+1 ≤ 0.8
 double clampY( double y );						// −0.07 ≤ vt+1 ≤ 0.07
 double convertAction( int action );
 
-Matrix r[3]; // reward matrix that has our "environment" state
+// Reward: +1 at goal, -1 not at goal
+//Matrix r[3]; // reward matrix that has our "environment" state
 Matrix q[3]; // path matrix
 
 int main() {
 	
 	int numEpisodes = 1;
 	int goal = 0.8;		// Where we want to be at the end of this insanity
+	
 	int numRows = 15; 	// velocity: 	steps of 0.01
 	int numCols = 41; 	// position: 	steps of 0.05
 	
 	state s;
 	state sprime;
-	
 	int a = 0; 	// 0=reverse, 1=coast, 2=forward
 	int aprime = 0;
-	double temp = 0.0;
+	double reward = 0.0;
 	
 	double mu = 0.7;
 	double gamma = 0.4;
-	double epsilon = 0.1
+	double epsilon = 0.1;
 	
-	// are these needed?
+	double temp = 0.0;
+	//std::random_device rd; // uncomment if system supports random_device. eng(rd) will be needed.
+	default_random_engine eng; 								// generate random numbers from distributions
+	uniform_real_distribution<double> realDist(0.0, 1.0); 	// for epsilon decisions
+	uniform_int_distribution<int> intDist(0, 2);			// for picking an action
+	
+	
+	/* are these needed?
 	r[0] = new Matrix(numRows, numCols, "reverse");
 	r[1] = new Matrix(numRows, numCols, "coast");	
 	r[2] = new Matrix(numRows, numCols, "forward");
 	for( Matrix &mat : r ) // Initialize state to -1, 0, or 1
 		mat.randInt(-1, 1);
-
+	*/
 		
 	q[0] = new Matrix(numRows, numCols, "reverse");
 	q[1] = new Matrix(numRows, numCols, "coast");	
 	q[2] = new Matrix(numRows, numCols, "forward");	
 	for( Matrix &mat : q )
-		mat.randInt(-1, 1); // zero out path matrix
+		mat.randInit(-1, 1); // zero out path matrix
 	
 	
 	
@@ -67,23 +75,26 @@ int main() {
 	for( int i = 0; i < numEpisodes; i++ )
 	{
 		s.p = s.v = 0.0;
-		next.p = next.v = 0.0;
+		sprime.p = sprime.v = 0.0;
+		
 		while(s.p != goal ) // One "episode" or "trace"
 		{
 			// Select action a using epsilion-greedy
-			a = selectAction();
-			// MAKE SURE TO CONVERT A TO/FROM INDEX!
+			if(realDist(eng) < epsilon)
+				a = intDist(eng); 
+			else
+				a = maxAction(s); // MAKE SURE TO CONVERT A TO/FROM INDEX!
 			
-			// Take action a and recieve reward r
-			reward = r[a].get(s.v, s.p);
+			// Take action a and recieve reward r 
+			reward = q[a].get(s.v, s.p);
 			
 			// Sample new state s'
-			sprime.v = vel( s.v, a, s.p );
+			sprime.v = vel( s, a );
 			sprime.p = pos( s.p, sprime.v );
 			 
 			// Update Q(s, a) <- Q(s, a) + mu(r + gamma max_a' Q(s', a') - Q(s, a))
 			temp = mu * ( reward + gamma * q[aprime].get(sprime.v, sprime.p) - q[a].get(s.v, s.p) );
-			q[action].set(s.v, s.p, temp); // remember, rows = v, cols = p
+			q[a].set(s.v, s.p, temp); // remember, rows = v, cols = p
 			
 			// Set s <- s'
 			s = sprime;
@@ -98,13 +109,20 @@ int main() {
 	return 0;
 }
 
-int next( state s, int action )
-{
-	
-}
 
-int selectAction()
+// select action with greatest reward
+int maxAction( state s )
 {
+	int action = 0;
+	double max = q[action].get(s.v, s.p);
+	for(int i = 0; i < 3; i++)
+	{
+		if(q[i].get(s.v, s.p) > max)
+		{
+			action = i;
+			max = q[i].get(s.v, s.p);
+		}
+	}
 	
 }
 

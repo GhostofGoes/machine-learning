@@ -1223,7 +1223,7 @@ Matrix &Matrix::constantDiagonal(double x)
 }
 
 
-Matrix &Matrix::randInt(int min, int max)
+Matrix &Matrix::randInit(int min, int max)
 {	
 	//std::random_device rd;
 	static std::default_random_engine eng;
@@ -1234,7 +1234,7 @@ Matrix &Matrix::randInt(int min, int max)
 		for ( int c = 0; c < maxc; c++ )
 		{
 			//m[r][c] = std::rand() % (max - min);
-			m[r][c] = (int)dist(eng);
+			m[r][c] = dist(eng);
 		}
 	}
 	

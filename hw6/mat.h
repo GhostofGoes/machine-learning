@@ -129,7 +129,7 @@ public:
     Matrix &mapIndex(double (*f)(int r, int c, double x)); // apply function to elements + index
 
     // random initialization
-	Matrix &randInt(int min, int max);
+	Matrix &randInit(int min, int max);
     Matrix &randCol(int c, double min, double max);  // random reals in a column
     Matrix &rand(double min, double max);            // random reals in range 
     Matrix &rand(int min, int max);                  // random integers in range
