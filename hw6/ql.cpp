@@ -14,68 +14,111 @@ using namespace std;
 #define DEBUG 0
 
 // Reward: +1 at goal, -1 not at goal
-// action(t) = 1 forward, action(t) = 0 coast, action(t) = -1 reverse
-// bound enforces −1.2 ≤ xt+1 ≤ 0.8 and −0.07 ≤ vt+1 ≤ 0.07
+typedef struct { double p, double v } state;
 
-int next( double pos, double vel, double action );
-double v( double currVel, double action, double currPos ); 	// vt+1 = bound(vt + 0.001at − 0.0025 cos(3xt))
-double x( double currPos, double newVel ); 					// xt+1 = bound(xt + vt+1)
-double clampX( double x );
-double clampY( double y );
+int next( double pos, double vel, int action );
+int selectAction();
+
+// bound enforces  and 
+double vel( state s, int action ); 			// vt+1 = bound(vt + 0.001at − 0.0025 cos(3xt))
+double pos( double currPos, double newVel ); 	// xt+1 = bound(xt + vt+1)
+double clampX( double x );						// −1.2 ≤ xt+1 ≤ 0.8
+double clampY( double y );						// −0.07 ≤ vt+1 ≤ 0.07
+double convertAction( int action );
+
 Matrix r[3]; // reward matrix that has our "environment" state
 Matrix q[3]; // path matrix
 
 int main() {
 	
-	int numEpisodes = 0;
+	int numEpisodes = 1;
 	int goal = 0.8;		// Where we want to be at the end of this insanity
 	int numRows = 15; 	// velocity: 	steps of 0.01
 	int numCols = 41; 	// position: 	steps of 0.05
 	
-	double currVel = 0.0, currPos = 0.0; 	// current state
-	double newVel = 0.0, newPos = 0.0;		// new state
-	double action = 0; 	// actions:	forward = 1, coast = 0, reverse = -1
+	state s;
+	state sprime;
 	
+	int a = 0; 	// 0=reverse, 1=coast, 2=forward
+	int aprime = 0;
+	double temp = 0.0;
+	
+	double mu = 0.7;
+	double gamma = 0.4;
+	double epsilon = 0.1
+	
+	// are these needed?
 	r[0] = new Matrix(numRows, numCols, "reverse");
 	r[1] = new Matrix(numRows, numCols, "coast");	
 	r[2] = new Matrix(numRows, numCols, "forward");
 	for( Matrix &mat : r ) // Initialize state to -1, 0, or 1
 		mat.randInt(-1, 1);
-	
+
+		
 	q[0] = new Matrix(numRows, numCols, "reverse");
 	q[1] = new Matrix(numRows, numCols, "coast");	
 	q[2] = new Matrix(numRows, numCols, "forward");	
 	for( Matrix &mat : q )
-		mat.constant(0.0); // zero out path matrix
+		mat.randInt(-1, 1); // zero out path matrix
 	
 	
 	
+	// Training
+	for( int i = 0; i < numEpisodes; i++ )
+	{
+		s.p = s.v = 0.0;
+		next.p = next.v = 0.0;
+		while(s.p != goal ) // One "episode" or "trace"
+		{
+			// Select action a using epsilion-greedy
+			a = selectAction();
+			// MAKE SURE TO CONVERT A TO/FROM INDEX!
+			
+			// Take action a and recieve reward r
+			reward = r[a].get(s.v, s.p);
+			
+			// Sample new state s'
+			sprime.v = vel( s.v, a, s.p );
+			sprime.p = pos( s.p, sprime.v );
+			 
+			// Update Q(s, a) <- Q(s, a) + mu(r + gamma max_a' Q(s', a') - Q(s, a))
+			temp = mu * ( reward + gamma * q[aprime].get(sprime.v, sprime.p) - q[a].get(s.v, s.p) );
+			q[action].set(s.v, s.p, temp); // remember, rows = v, cols = p
+			
+			// Set s <- s'
+			s = sprime;
+		}
+	}
 	
-
+	
 	// Output: 3 Q-matricies to "run a mountain car"
 	for( Matrix &mat : q )
 		mat.write();
 	
-	return(0);
+	return 0;
 }
 
-int next( double pos, double vel, int action )
+int next( state s, int action )
 {
 	
 }
 
+int selectAction()
+{
+	
+}
 
 // vt+1 = bound(vt + 0.001at − 0.0025 cos(3xt))
-double v( double currVel, double action, double currPos )
+double vel( state s, int action )
 {
-	double newVel = currVel;
-	newVel += 0.001 * action;
-	newVel -= 0.0025 * cos(3.0 * currPos);
+	double newVel = s.v;
+	newVel += 0.001 * convertAction(action);
+	newVel -= 0.0025 * cos(3.0 * s.p);
 	return clampY(newVel);
 }
 
 // xt+1 = bound(xt + vt+1)
-double x( double currPos, double newVel )
+double pos( double currPos, double newVel )
 {
 	return clampX(currPos + newVel);
 }
@@ -90,4 +133,11 @@ double clampX( double x )
 double clampY( double y )
 {
 	return y > 0.07 ? 0.07 : y < -0.07 ? -0.07 : y;
+}
+
+// 0=reverse, 1=coast, 2=forward
+// -1 = reverse, 0 = coast, 1 = forward
+double convertAction( int action )
+{
+	return action == 0 ? -1.0 : action == 1 ? 0.0 : action == 2 ? 1.0 : -99.0;
 }
