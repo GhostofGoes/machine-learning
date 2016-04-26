@@ -16,7 +16,7 @@ using namespace std;
 
 
 
-typedef struct { double p, v; } state;
+typedef struct { double p, v; int x, y; } state;
 
 int maxAction( state s );
 
@@ -26,11 +26,15 @@ double clampX( double x );						// −1.2 ≤ xt+1 ≤ 0.8
 double clampY( double y );						// −0.07 ≤ vt+1 ≤ 0.07
 double convertAction( int action );
 
+int vToX( double v ); // this would be easier in python
+int pToY( double p );
+
 // Reward: +1 at goal, -1 not at goal
 //Matrix r[3]; // reward matrix that has our "environment" state
 Matrix q[3]; // path matrix
 
-int main() {
+int main()
+{
 	
 	int numEpisodes = 1;
 	int goal = 0.8;		// Where we want to be at the end of this insanity
@@ -75,7 +79,9 @@ int main() {
 	for( int i = 0; i < numEpisodes; i++ )
 	{
 		s.p = s.v = 0.0;
+		s.x = s.y = 0;
 		sprime.p = sprime.v = 0.0;
+		sprime.x = sprime.y = 0;
 		
 		while(s.p != goal ) // One "episode" or "trace"
 		{
@@ -83,18 +89,20 @@ int main() {
 			if(realDist(eng) < epsilon)
 				a = intDist(eng); 
 			else
-				a = maxAction(s); // MAKE SURE TO CONVERT A TO/FROM INDEX!
+				a = maxAction(s);
 			
 			// Take action a and recieve reward r 
-			reward = q[a].get(s.v, s.p);
+			reward = q[a].get(s.x, s.y);
 			
 			// Sample new state s'
 			sprime.v = vel( s, a );
+			sprime.x = vToX(sprime.v);
 			sprime.p = pos( s.p, sprime.v );
+			sprime.y = pToY(sprime.p);
 			 
 			// Update Q(s, a) <- Q(s, a) + mu(r + gamma max_a' Q(s', a') - Q(s, a))
-			temp = mu * ( reward + gamma * q[aprime].get(sprime.v, sprime.p) - q[a].get(s.v, s.p) );
-			q[a].set(s.v, s.p, temp); // remember, rows = v, cols = p
+			temp = mu * ( reward + gamma * q[aprime].get(sprime.x, sprime.y) - q[a].get(s.x, s.y) );
+			q[a].set(s.x, s.y, temp); // remember, rows = v, cols = p
 			
 			// Set s <- s'
 			s = sprime;
@@ -114,13 +122,13 @@ int main() {
 int maxAction( state s )
 {
 	int action = 0;
-	double max = q[action].get(s.v, s.p);
+	double max = q[action].get(s.x, s.y);
 	for(int i = 0; i < 3; i++)
 	{
-		if(q[i].get(s.v, s.p) > max)
+		if(q[i].get(s.x, s.y) > max)
 		{
 			action = i;
-			max = q[i].get(s.v, s.p);
+			max = q[i].get(s.x, s.y);
 		}
 	}
 	
@@ -158,4 +166,31 @@ double clampY( double y )
 double convertAction( int action )
 {
 	return action == 0 ? -1.0 : action == 1 ? 0.0 : action == 2 ? 1.0 : -99.0;
+}
+
+
+// Can probably precalculate these and just do a lookup. Could use a dict in python, not sure in C++. Meh.
+int vToX( double v )
+{
+	int x = 0;
+	double comp = -0.07;
+	
+	while(v != comp && comp < 0.07)
+	{
+		x++;
+		comp += 0.01;
+	}
+	return x;
+}
+
+int pToY( double p )
+{
+	int y = 0;
+	double comp = -1.2;
+	
+	while(p != comp && comp < 0.8)
+	{
+		y++;
+		comp += 0.05;
+	}
 }
