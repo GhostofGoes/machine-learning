@@ -1227,7 +1227,7 @@ Matrix &Matrix::randInit(int min, int max)
 {	
 	//std::random_device rd;
 	static std::default_random_engine eng;
-	static std::uniform_int_distribution<int> dist(min, max);
+	static std::uniform_real_distribution<double> dist(min, max);
 
 	for ( int r = 0; r < maxr; r++ )
 	{

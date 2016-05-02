@@ -9,11 +9,7 @@
 #include <random>
 #include <cmath>
 #include "mat.h"
-
-#define DEBUG 0
-
 using namespace std;
-
 
 
 typedef struct { double p, v; int x, y; } state;
@@ -29,50 +25,37 @@ double convertAction( int action );
 int vToX( double v ); // this would be easier in python
 int pToY( double p );
 
-// Reward: +1 at goal, -1 not at goal
-//Matrix r[3]; // reward matrix that has our "environment" state
 Matrix q[3]; // path matrix
 
 int main()
 {
-	
-	int numEpisodes = 1;
+	int numEpisodes = 10000; // Number of "episodes" to train and improve the path matrix
 	int goal = 0.8;		// Where we want to be at the end of this insanity
 	
 	int numRows = 15; 	// velocity: 	steps of 0.01
 	int numCols = 41; 	// position: 	steps of 0.05
 	
-	state s;
-	state sprime;
-	int a = 0; 	// 0=reverse, 1=coast, 2=forward
-	int aprime = 0;
+	state s;			// Current State
+	state sprime;		// Next state
+	int a = 0; 			// Current Action: 0=reverse, 1=coast, 2=forward
+	int aprime = 0; 	// Next action to be taken
 	double reward = 0.0;
 	
 	double mu = 0.7;
 	double gamma = 0.4;
 	double epsilon = 0.1;
 	
-	double temp = 0.0;
+	double temp = 0.0;	// Improve readability. gcc will optimize this out anyhow.
 	//std::random_device rd; // uncomment if system supports random_device. eng(rd) will be needed.
 	default_random_engine eng; 								// generate random numbers from distributions
-	uniform_real_distribution<double> realDist(0.0, 1.0); 	// for epsilon decisions
-	uniform_int_distribution<int> intDist(0, 2);			// for picking an action
-	
-	
-	/* are these needed?
-	r[0] = new Matrix(numRows, numCols, "reverse");
-	r[1] = new Matrix(numRows, numCols, "coast");	
-	r[2] = new Matrix(numRows, numCols, "forward");
-	for( Matrix &mat : r ) // Initialize state to -1, 0, or 1
-		mat.randInt(-1, 1);
-	*/
+	uniform_real_distribution<double> realDist(0.0, 1.0); 	// epsilon decisions
+	uniform_int_distribution<int> intDist(0, 2);			// picking an action
 		
 	q[0] = new Matrix(numRows, numCols, "reverse");
 	q[1] = new Matrix(numRows, numCols, "coast");	
 	q[2] = new Matrix(numRows, numCols, "forward");	
 	for( Matrix &mat : q )
 		mat.randInit(-1, 1); // zero out path matrix
-	
 	
 	
 	// Training
