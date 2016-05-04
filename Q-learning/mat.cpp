@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
-#include "rand.h"
+//#include "rand.h"
 #include <random>
 
 #include "mat.h"
@@ -926,14 +926,14 @@ Matrix &Matrix::swap(Matrix &other)
     assertDefined("lhs of swap");
     other.assertDefined("rhs of swap");
     assertOtherSizeMatch(other, "swap");
+    double tmp;
 
     for (int r=0; r<maxr; r++) {
         for (int c=0; c<maxc; c++) {
-            double tmp;
-
             tmp = m[r][c];
             m[r][c] = other.m[r][c];
-            other.m[r][c] = m[r][c];
+            //other.m[r][c] = m[r][c];
+			other.m[r][c] = tmp;
         }
     }
 
@@ -982,12 +982,11 @@ Matrix &Matrix::dotT(const Matrix &other)
     assertColsEqual(other, "dotT");
 
     Matrix *out;
-
+	double sum;
     out = new Matrix(maxr, other.maxr);
+	
     for (int r=0; r<maxr; r++) {               // use columns from first
         for (int c=0; c<other.maxr; c++) {
-            double sum;
-
             sum = 0;
             for (int i=0; i<maxc; i++) {       // sum over columns
                 sum += m[r][i] * other.m[c][i];  // go down the transpose
@@ -1013,12 +1012,11 @@ Matrix &Matrix::Tdot(const Matrix &other)
     assertRowsEqual(other, "dot");
 
     Matrix *out;
-
+    double sum;
+	
     out = new Matrix(maxc, other.maxc);        // use columns from first
     for (int r=0; r<maxc; r++) {               // use columns from first
         for (int c=0; c<other.maxc; c++) {
-            double sum;
-
             sum = 0;
             for (int i=0; i<maxr; i++) {       // sum over rows
                 sum += m[i][r] * other.m[i][c];  // go down the transpose
@@ -1040,12 +1038,11 @@ Matrix &Matrix::Tdot(const Matrix &other)
 Matrix &Matrix::meanVec()
 {
     Matrix *mean;
-
+    double sum;
+	
     mean = new Matrix(1, maxc);
 
     for (int c=0; c<maxc; c++) {
-        double sum;
-
         sum = 0;
         for (int r=0; r<maxr; r++) {
             sum += m[r][c];
@@ -1222,10 +1219,10 @@ Matrix &Matrix::constantDiagonal(double x)
     return *this;
 }
 
-
-Matrix &Matrix::randInit(int min, int max)
+// fill with random doubles in the given range: [min, max)
+Matrix &Matrix::rand(double min, double max)
 {	
-	//std::random_device rd;
+	//static std::random_device rd;
 	static std::default_random_engine eng;
 	static std::uniform_real_distribution<double> dist(min, max);
 
@@ -1233,7 +1230,6 @@ Matrix &Matrix::randInit(int min, int max)
 	{
 		for ( int c = 0; c < maxc; c++ )
 		{
-			//m[r][c] = std::rand() % (max - min);
 			m[r][c] = dist(eng);
 		}
 	}
@@ -1242,27 +1238,18 @@ Matrix &Matrix::randInit(int min, int max)
 	return *this;
 }
 
-// fill with random doubles in the given range: [min, max)
-Matrix &Matrix::rand(double min, double max)
-{	
-    for (int r=0; r<maxr; r++) {
-        for (int c=0; c<maxc; c++) {
-            m[r][c] = randUnit()*(max-min) + min;
-        }
-    }
-
-    defined = true;
-
-    return *this;
-}
-
 
 // fill the given column with random doubles in the given range: [min, max)
 // does not set the state of undefined
 Matrix &Matrix::randCol(int c, double min, double max)
-{		
+{
+	//static std::random_device rd;
+	static std::default_random_engine eng;
+	static std::uniform_real_distribution<double> dist(min, max);
+	
     for (int r=0; r<maxr; r++) {
-        m[r][c] = randUnit()*(max-min) + min;
+        //m[r][c] = randUnit()*(max-min) + min;
+		m[r][c] = dist(eng);
     }
 
     return *this;
@@ -1272,13 +1259,18 @@ Matrix &Matrix::randCol(int c, double min, double max)
 // fill with random integers in the given range: [min, max)
 Matrix &Matrix::rand(int min, int max)
 {
+	//static std::random_device rd;
+	static std::default_random_engine eng;
+	static std::uniform_int_distribution<int> dist(min, max);
+	
     for (int r=0; r<maxr; r++) {
         for (int c=0; c<maxc; c++) {
-            m[r][c] = randMod(max-min) + min;
+            //m[r][c] = randMod(max-min) + min;
+			m[r][c] = dist(eng);
         }
     }
+	
     defined = true;
-
     return *this;
 }
 
