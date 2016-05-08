@@ -15,14 +15,12 @@ using namespace std;
 typedef struct { double p, v; int x, y; } state;
 
 int maxAction( state s );
-
 double vel( state s, int action ); 				// vt+1 = bound(vt + 0.001at − 0.0025 cos(3xt))
 double pos( double currPos, double newVel ); 	// xt+1 = bound(xt + vt+1)
 double clampX( double x );						// −1.2 ≤ xt+1 ≤ 0.8
 double clampY( double y );						// −0.07 ≤ vt+1 ≤ 0.07
 double convertAction( int action );
-
-int vToX( double v ); // this would be easier in python
+int vToX( double v );
 int pToY( double p );
 
 Matrix q[3]; // path matrix
@@ -30,14 +28,13 @@ Matrix q[3]; // path matrix
 int main()
 {
 	int numEpisodes = 10000;	// Number of "episodes" to train and improve the path matrix
-	int goal = 0.8;				// Where we want to be at the end of this insanity
-	
+	int goal = 0.8;				// Where we want to be
 	int numRows = 15; 		// velocity: 	steps of 0.01
 	int numCols = 41; 		// position: 	steps of 0.05
 	
 	state s;				// Current State
 	state sprime;			// Next state
-	int a = 0; 				// Current Action: 0=reverse, 1=coast, 2=forward (unless you're his test script...)
+	int a = 0; 				// Current Action: 0=reverse, 1=coast, 2=forward
 	int aprime = 0; 		// Next action to be taken
 	double reward = 0.0;	// Reward from sampling next action
 	
@@ -45,17 +42,16 @@ int main()
 	double gamma = 0.5;		// 0.4 from book
 	double epsilon = 0.2;	// 0.1 from book
 	
-	double temp = 0.0;	// Improve readability. gcc will optimize this out anyhow.
-	//std::random_device rd; // uncomment if system supports random_device. eng(rd) will be needed.
+	double temp = 0.0;		// Improve code readability
 	default_random_engine eng; 								// generate random numbers from distributions
 	uniform_real_distribution<double> realDist(0.0, 1.0); 	// epsilon decisions
 	uniform_int_distribution<int> intDist(0, 2);			// picking an action
 		
-	q[0] = new Matrix(numRows, numCols, "forward"); // reverse in assignment, forward in test script...
+	q[0] = new Matrix(numRows, numCols, "forward"); // reverse in assignment, forward in test script
 	q[1] = new Matrix(numRows, numCols, "coast");	
-	q[2] = new Matrix(numRows, numCols, "reverse");	 // forward in assignment, reverse in test script...
+	q[2] = new Matrix(numRows, numCols, "reverse");	 // forward in assignment, reverse in test script
 	for( Matrix &mat : q )
-		mat.rand(-1.0, 1.0); // zero out path matrix
+		mat.rand(-1.0, 1.0); // initialize Q-matricies to random values	
 	
 	
 	// Training
@@ -67,21 +63,21 @@ int main()
 		sprime.x = sprime.y = 0;
 		a = aprime = 0;
 		
-		while(s.p != goal ) // One "episode" or "trace"
+		while(s.p < goal ) // One "episode" or "trace"
 		{
 			// Select action a using epsilion-greedy
 			if(realDist(eng) < epsilon)
 				aprime = intDist(eng); 
 			else
 				aprime = maxAction(s);
-			
+						
 			// Take action a and recieve reward r 
 			reward = q[aprime].get(s.x, s.y);
 			
 			// Sample new state s'
-			sprime.v = vel( s, aprime );
+			sprime.v = vel(s, aprime);
 			sprime.x = vToX(sprime.v);
-			sprime.p = pos( s.p, sprime.v );
+			sprime.p = pos(s.p, sprime.v);
 			sprime.y = pToY(sprime.p);
 						 
 			// Update Q(s, a) <- Q(s, a) + mu(r + gamma max_a' Q(s', a') - Q(s, a))
@@ -148,16 +144,13 @@ double clampY( double y )
 	return y > 0.07 ? 0.07 : y < -0.07 ? -0.07 : y;
 }
 
-// 0=reverse, 1=coast, 2=forward
-// -1 = reverse, 0 = coast, 1 = forward
-// NOTE: swapped negative since his script is backwards
+// NOTE: swapped negative since test script is backwards
+// Converts [-1, 1] to [0, 2] 
 double convertAction( int action )
 {
 	return action == 0 ? 1.0 : action == 1 ? 0.0 : action == 2 ? -1.0 : -99.0;
 }
 
-
-// Can probably precalculate these and just do a lookup. Could use a dict in python, not sure in C++. Meh.
 int vToX( double v )
 {
 	int x = 0;
