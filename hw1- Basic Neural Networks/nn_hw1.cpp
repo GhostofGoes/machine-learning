@@ -2,7 +2,9 @@
 // Author: 		Christopher Goes
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
-// Description:	Assignments 1 and 2 main program logic
+// Book: 		Machine Learning: An Algorithmic Perspective
+// Description:	Assignments 1 and 2
+// Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>
 #include <iomanip>

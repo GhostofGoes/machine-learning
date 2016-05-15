@@ -2,7 +2,9 @@
 // Author: 		Christopher Goes
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
-// Description:	Assignment 2 main program logic
+// Description:	Assignment 2
+// Book: 		Machine Learning: An Algorithmic Perspective
+// Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>
 #include <iomanip>
@@ -20,13 +22,13 @@ double sigmoid( double input );     // Sigmoid function
 
 int main() 
 {	
-	int numInputs = 0; // do you want a comment for this, non-existance comment monkey?
+	int numInputs = 0; 		// do you want a comment for this, non-existant comment monkey?
 	int rows = 0;
 	int cols = 0;
-	double temp = -99; // 99 bottles of brain juice in the bar matrix...
-	double bias = -1; // -1 is what the book uses.
-	double eta = 0.025; // 0.25 is what the book uses. open to tweaking.
-	int attempts = 20000; // if you're debugging the loop, SET THIS TO A SMALL NUMBER!
+	double temp = -99; 
+	double bias = -1; 		// -1 is what the book uses.
+	double eta = 0.025; 	// 0.25 is what the book uses. open to tweaking.
+	int attempts = 20000; 	// if you're debugging the loop, SET THIS TO A SMALL NUMBER!
 	
 	/* Training Data Input */
 	cin >> numInputs;
@@ -35,8 +37,6 @@ int main()
 	int numOutputs = cols - numInputs;
 	Matrix* tinput = new Matrix(rows, numInputs + 1);
 	Matrix* toutput = new Matrix(rows, numOutputs); 
-	
-	
 	if(DEBUGINPUT) { cout << "Inputs: " << numInputs << "\nRows: " << rows << "\nCols: " << cols << endl; }
 
 	// Fill the matrix
@@ -70,9 +70,10 @@ int main()
 	tinput->normalize();
 	
 	/**** Training ****/
+	// NOTE: the strange init values are paranoia for error catching
 	Matrix * aResults = new Matrix(rows, numOutputs);
 	Matrix * w = new Matrix(numInputs, numOutputs, 2);
-	double tResult = -66.6; // the init values are paranoia for error catching
+	double tResult = -66.6; 
 	double aResult = -55.5;
 	double fResult = -42.0;
 	
@@ -130,7 +131,7 @@ int main()
 	}
  
 	// ** Test Data Input **
-	temp = -99; // paranoia
+	temp = -99;
 	cin >> rows;
 	cin >> cols;
 	Matrix* test = new Matrix(rows, cols + 1);

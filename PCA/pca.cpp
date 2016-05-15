@@ -2,7 +2,8 @@
 // Author: 		Christopher Goes
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
-// Description:	Assignment 5 main program logic
+// Description:	Assignment 5 - Principle Component Analysis
+// Book: 		Machine Learning: An Algorithmic Perspective
 // Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>

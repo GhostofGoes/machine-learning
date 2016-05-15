@@ -2,7 +2,8 @@
 // Author: 		Christopher Goes
 // Course: 		CS 404 Machine Learning and Data Mining
 // Semester: 	Spring 2016
-// Description:	Assignment 6: Q-learning Mountain Car 
+// Description:	Assignment 6 - Q-learning - Mountain Car problem
+// Book: 		Machine Learning: An Algorithmic Perspective 
 // Github:		https://github.com/GhostofGoes/cgoes-cs404
 
 #include <iostream>

@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
-//#include "rand.h"
 #include <random>
 
 #include "mat.h"
