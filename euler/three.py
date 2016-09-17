@@ -1,7 +1,9 @@
-#!/usr/bin/env python3
+cut = num = 600851475143  # 13195
+chopper = 2
 
-num = 600851475143
-
-
-print("Largest prime factor: ")
-# not working yet obviously lol
+while chopper < cut:
+    if cut % chopper != 0:
+        chopper += 1
+    else:
+        cut = cut // chopper
+print(cut)
