@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-def factorial(num):
+
+def factorial(n):
     temp = 1
-    for i in range(num, 1, -1):
+    for i in range(n, 1, -1):
         temp *= i
     return temp
 

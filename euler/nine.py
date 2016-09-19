@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 
 def find_abc():
     for a in range(1, 500):
@@ -6,6 +8,4 @@ def find_abc():
                 if(a ** 2 + b ** 2 == c ** 2) and (a + b + c == 1000):
                     return a, b, c
 r = find_abc()
-print(r)
-print(r[0] + r[1] + r[2])
 print(r[0] * r[1] * r[2])

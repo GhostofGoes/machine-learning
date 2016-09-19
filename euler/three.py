@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 cut = num = 600851475143  # 13195
 chopper = 2
 

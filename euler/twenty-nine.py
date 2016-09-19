@@ -1,15 +1,9 @@
-
-aLow = 2
-aHigh = 100 + 1
-bLow = 2
-bHigh = 100 + 1
+#!/usr/bin/env python3
 
 results = []
-for a in range(aLow, aHigh):
-    for b in range(bLow, bHigh):
+for a in range(2, 101):
+    for b in range(2, 101):
         term = a ** b
         if term not in results:
             results.append(term)
-
-print(results)
 print(len(results))

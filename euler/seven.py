@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
+from math import sqrt
 
-import math
 
-def is_prime(num):
-    for i in range(2, num): # since range is 1 less than num specified
-        if num % i == 0:
+def is_prime(n):
+    for i in range(2, n):  # since range is 1 less than num specified
+        if n % i == 0:
             return False
     return True
+
 
 def new_is_prime(n):
     if n % 2 == 0 and n > 2:
         return False
-    return all(n % i for i in range(3, int(math.sqrt(n)) + 1, 2))
+    return all(n % i for i in range(3, int(sqrt(n)) + 1, 2))
 
 
 prime_count = 1
